@@ -5,26 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Work Screensaver</title>
     <style>
-        body {
+        html, body {
             margin: 0;
             padding: 0;
             background: #000;
             color: #fff;
             font-family: Arial, sans-serif;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            height: 100%;
+            box-sizing: border-box;
         }
         .top-bar {
             width: 100vw;
             text-align: center;
-            font-size: 2em;
-            padding: 20px 0 10px 0;
+            font-size: 2.5em;
+            padding: 30px 0 10px 0;
         }
         .dates {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 12px;
             align-items: center;
         }
         .main-content {
@@ -36,53 +36,72 @@
             width: 100vw;
             margin-top: 10px;
             margin-bottom: 10px;
+            min-height: 60vh;
         }
         .side-panel {
-            flex: 1 0 250px;
-            max-width: 330px;
-            padding: 20px 10px;
+            flex: 1 0 1200px;
+            max-width: 2000px;
+            padding: 25px 5px;
             box-sizing: border-box;
-            min-width: 220px;
+            min-width: 700px;
         }
         .center-logo {
-            flex: 0 1 650px;
+            flex: 0 1 2000px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            min-width: 320px;
+            min-width: 600px;
         }
         .logo {
-            max-width: 420px;
+            max-width: 1680px; /* 420px x 4 */
             width: 100%;
             height: auto;
             margin: 40px 0 30px 0;
             display: block;
         }
         .section-title {
-            font-size: 1.5em;
-            margin-bottom: 10px;
+            font-size: 6em;   /* 1.5em x 4 */
+            margin-bottom: 20px;
         }
         .zmanim-list, .shabbat-list {
             text-align: left;
-            font-size: 1.15em;
-            margin-bottom: 10px;
+            font-size: 4.6em; /* 1.15em x 4 */
+            margin-bottom: 20px;
+            line-height: 1.22;
         }
         .office-updates {
             width: 100vw;
             text-align: center;
-            padding: 22px 0 10px 0;
-            font-size: 1.35em;
+            padding: 32px 0 18px 0;
+            font-size: 2.2em;
             background: rgba(255,255,255,0.07);
             border-top: 1px solid #444;
         }
         .office-updates img {
-            max-width: 260px;
-            max-height: 200px;
-            margin-top: 10px;
+            max-width: 520px;
+            max-height: 420px;
+            margin-top: 18px;
             display: block;
             margin-left: auto;
             margin-right: auto;
+        }
+        @media (max-width: 1700px) {
+            .main-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            .side-panel, .center-logo {
+                max-width: unset;
+                min-width: unset;
+                width: 95vw;
+            }
+            .zmanim-list, .shabbat-list {
+                font-size: 2.4em;
+            }
+            .section-title {
+                font-size: 3em;
+            }
         }
         @media (max-width: 900px) {
             .main-content {
@@ -92,7 +111,16 @@
             .side-panel, .center-logo {
                 max-width: unset;
                 min-width: unset;
-                width: 90vw;
+                width: 98vw;
+            }
+            .logo {
+                max-width: 90vw;
+            }
+            .zmanim-list, .shabbat-list {
+                font-size: 1.3em;
+            }
+            .section-title {
+                font-size: 1.8em;
             }
         }
     </style>
@@ -142,7 +170,7 @@
             updatesFile: "updates.json"
         };
 
-        // Set logo (if you want to change it later)
+        // Set logo
         document.querySelector('.logo').src = config.logoSrc;
 
         // --- Dates ---
