@@ -39,42 +39,42 @@
             min-height: 60vh;
         }
         .side-panel {
-            flex: 1 0 1200px;
-            max-width: 2000px;
+            flex: 1 0 600px;
+            max-width: 900px;
             padding: 25px 5px;
             box-sizing: border-box;
-            min-width: 700px;
+            min-width: 340px;
         }
         .center-logo {
-            flex: 0 1 2000px;
+            flex: 0 1 1200px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            min-width: 600px;
+            min-width: 320px;
         }
         .logo {
-            max-width: 1680px; /* 420px x 4 */
+            max-width: 900px; /* Make logo larger. Adjust as needed! */
             width: 100%;
             height: auto;
             margin: 40px 0 30px 0;
             display: block;
         }
         .section-title {
-            font-size: 6em;   /* 1.5em x 4 */
+            font-size: 3em;   /* 1.5em x 2 */
             margin-bottom: 20px;
         }
         .zmanim-list, .shabbat-list {
             text-align: left;
-            font-size: 4.6em; /* 1.15em x 4 */
+            font-size: 2.3em; /* 1.15em x 2 */
             margin-bottom: 20px;
             line-height: 1.22;
         }
         .office-updates {
             width: 100vw;
             text-align: center;
-            padding: 32px 0 18px 0;
-            font-size: 2.2em;
+            padding: 22px 0 10px 0;
+            font-size: 1.35em; /* Back to normal size */
             background: rgba(255,255,255,0.07);
             border-top: 1px solid #444;
         }
@@ -86,7 +86,7 @@
             margin-left: auto;
             margin-right: auto;
         }
-        @media (max-width: 1700px) {
+        @media (max-width: 1300px) {
             .main-content {
                 flex-direction: column;
                 align-items: center;
@@ -96,11 +96,8 @@
                 min-width: unset;
                 width: 95vw;
             }
-            .zmanim-list, .shabbat-list {
-                font-size: 2.4em;
-            }
-            .section-title {
-                font-size: 3em;
+            .logo {
+                max-width: 90vw;
             }
         }
         @media (max-width: 900px) {
@@ -117,7 +114,7 @@
                 max-width: 90vw;
             }
             .zmanim-list, .shabbat-list {
-                font-size: 1.3em;
+                font-size: 1.1em;
             }
             .section-title {
                 font-size: 1.8em;
