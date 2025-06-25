@@ -75,7 +75,7 @@
             max-width: 1500px;
             width: 110%;
             height: auto;
-            margin: 50px 0 50px 0;
+            margin: 50px 0 40px 0;
             display: block;
         }
         .section-title {
@@ -178,13 +178,13 @@
             <img class="logo" src="DIESEL_FINAL_LOGO_3_COLOR-1-removebg-preview (1).png" alt="Diesel Funding Logo">
         </div>
         <div class="side-panel" id="shabbat-panel">
-    <div class="section-title">Shabbat Times</div>
-    <div class="shabbat-list">
-        <div id="parsha-name">Parsha: Loading...</div>
-        <div id="candle-lighting">Candle Lighting: Loading...</div>
-        <div id="havdalah">Havdalah: Loading...</div>
-    </div>
-</div>
+            <div class="section-title">Shabbat Times</div>
+            <div class="shabbat-list">
+                <div id="parsha-name">Parsha: Loading...</div>
+                <div id="candle-lighting">Candle Lighting: Loading...</div>
+                <div id="havdalah">Havdalah: Loading...</div>
+            </div>
+        </div>
     </div>
     <div class="office-updates">
         <div class="section-title">Office Updates</div>
@@ -249,60 +249,58 @@
                     });
             }
 
-            // Fetch and display Parsha (always for this week)
-async function fetchParsha() {
-    const today = new Date();
-    const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}`;
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const parshaItem = data.items.find(item => item.category === "parashat");
-        document.getElementById("parsha-name").textContent = parshaItem ? `Parsha: ${parshaItem.title}` : "Parsha: N/A";
-    } catch (error) {
-        document.getElementById("parsha-name").textContent = "Parsha: Error loading.";
-    }
-}
+            // Parsha (always for this week)
+            async function fetchParsha() {
+                const today = new Date();
+                const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}`;
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    const parshaItem = data.items.find(item => item.category === "parashat");
+                    document.getElementById("parsha-name").textContent = parshaItem ? `Parsha: ${parshaItem.title}` : "Parsha: N/A";
+                } catch (error) {
+                    document.getElementById("parsha-name").textContent = "Parsha: Error loading.";
+                }
+            }
 
-// Always show the next candle-lighting and havdalah, even if a week away
-async function fetchShabbatTimes() {
-    const today = new Date();
-    // Fetch 40 future events to ensure we catch the next candle lighting, even if it's next week
-    const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}&M=on&b=40`;
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const now = new Date();
+            // Always show the next candle-lighting and havdalah, even if a week away
+            async function fetchShabbatTimes() {
+                const today = new Date();
+                // Fetch 40 future events to ensure we catch the next candle lighting, even if it's next week
+                const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}&M=on&b=40`;
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    const now = new Date();
 
-        // Find the next candle-lighting event (today or later)
-        const candleLighting = data.items.find(item =>
-            item.category === "candle-lighting" && new Date(item.date) >= now
-        );
-        if (candleLighting) {
-            const dt = new Date(candleLighting.date);
-            document.getElementById("candle-lighting").textContent =
-                `Candle Lighting: ${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} on ${dt.toLocaleDateString()}`;
-        } else {
-            document.getElementById("candle-lighting").textContent = "Candle Lighting: N/A";
-        }
+                    // Find the next candle-lighting event (today or later)
+                    const candleLighting = data.items.find(item =>
+                        item.category === "candle-lighting" && new Date(item.date) >= now
+                    );
+                    if (candleLighting) {
+                        const dt = new Date(candleLighting.date);
+                        document.getElementById("candle-lighting").textContent =
+                            `Candle Lighting: ${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} on ${dt.toLocaleDateString()}`;
+                    } else {
+                        document.getElementById("candle-lighting").textContent = "Candle Lighting: N/A";
+                    }
 
-        // Find the next havdalah event (today or later)
-        const havdalah = data.items.find(item =>
-            item.category === "havdalah" && new Date(item.date) >= now
-        );
-        if (havdalah) {
-            const dt = new Date(havdalah.date);
-            document.getElementById("havdalah").textContent =
-                `Havdalah: ${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} on ${dt.toLocaleDateString()}`;
-        } else {
-            document.getElementById("havdalah").textContent = "Havdalah: N/A";
-        }
-    } catch (error) {
-        document.getElementById("candle-lighting").textContent = "Candle Lighting: Error";
-        document.getElementById("havdalah").textContent = "Havdalah: Error";
-    }
-}
-    }
-}
+                    // Find the next havdalah event (today or later)
+                    const havdalah = data.items.find(item =>
+                        item.category === "havdalah" && new Date(item.date) >= now
+                    );
+                    if (havdalah) {
+                        const dt = new Date(havdalah.date);
+                        document.getElementById("havdalah").textContent =
+                            `Havdalah: ${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} on ${dt.toLocaleDateString()}`;
+                    } else {
+                        document.getElementById("havdalah").textContent = "Havdalah: N/A";
+                    }
+                } catch (error) {
+                    document.getElementById("candle-lighting").textContent = "Candle Lighting: Error";
+                    document.getElementById("havdalah").textContent = "Havdalah: Error";
+                }
+            }
 
             async function fetchZmanim() {
                 const today = new Date();
