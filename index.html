@@ -8,82 +8,132 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #000;
+            background: #000;
             color: #fff;
             font-family: Arial, sans-serif;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
-            overflow: auto;
+            flex-direction: column;
         }
-        .container {
-            max-width: 80%;
-            display: block;
+        .top-bar {
+            width: 100vw;
+            text-align: center;
+            font-size: 2em;
+            padding: 20px 0 10px 0;
+        }
+        .dates {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: center;
+        }
+        .main-content {
+            flex: 1 0 auto;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100vw;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .side-panel {
+            flex: 1 0 250px;
+            max-width: 330px;
+            padding: 20px 10px;
+            box-sizing: border-box;
+            min-width: 220px;
+        }
+        .center-logo {
+            flex: 0 1 650px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-width: 320px;
         }
         .logo {
-            max-width: 300px;
+            max-width: 420px;
+            width: 100%;
+            height: auto;
+            margin: 40px 0 30px 0;
+            display: block;
+        }
+        .section-title {
+            font-size: 1.5em;
             margin-bottom: 10px;
         }
-        img.update-image {
-            max-width: 300px;
-            max-height: 300px;
+        .zmanim-list, .shabbat-list {
+            text-align: left;
+            font-size: 1.15em;
             margin-bottom: 10px;
-            display: none;
         }
-        .parsha {
-            font-size: 28px;
-            margin-bottom: 20px;
+        .office-updates {
+            width: 100vw;
+            text-align: center;
+            padding: 22px 0 10px 0;
+            font-size: 1.35em;
+            background: rgba(255,255,255,0.07);
+            border-top: 1px solid #444;
         }
-        .work-info {
-            font-size: 24px;
-            margin-bottom: 20px;
+        .office-updates img {
+            max-width: 260px;
+            max-height: 200px;
+            margin-top: 10px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .shabbat-times, .zmanim-times, .office-updates {
-            font-size: 28px;
-            margin-bottom: 20px;
-        }
-        .local-time {
-            font-size: 20px;
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            .side-panel, .center-logo {
+                max-width: unset;
+                min-width: unset;
+                width: 90vw;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <img class="logo" src="DIESEL_FINAL_LOGO_3_COLOR-1-removebg-preview (1).png" alt="Diesel Funding Logo">
-        <div class="parsha">
-            <h2>This Week's Parsha</h2>
-            <p id="parsha-name">Loading...</p>
-        </div>
-        <div class="work-info">
-            <h1>Diesel Funding</h1>
-        </div>
-        <div class="shabbat-times">
-            <h2>Shabbat Times</h2>
-            <p id="candle-lighting">Candle Lighting: Loading...</p>
-            <p id="havdalah">Havdalah: Loading...</p>
-        </div>
-        <div class="zmanim-times">
-            <h2>Daily Zmanim</h2>
-            <p id="sunrise">Sunrise: Loading...</p>
-            <p id="sunset">Sunset: Loading...</p>
-            <p id="shacharis">Shacharis: Loading...</p>
-            <p id="mincha">Mincha: Loading...</p>
-            <p id="maariv">Maariv: Loading...</p>
-        </div>
-        <div class="office-updates">
-            <h2>Office Updates</h2>
-            <p id="update-text">No updates available.</p>
-            <img id="update-image" class="update-image" alt="Office Image">
-        </div>
-        <div class="local-time">
-            <p id="current-time">Local Time: Loading...</p>
+    <div class="top-bar">
+        <div class="dates">
+            <span id="greg-date">Loading English date...</span>
+            <span id="heb-date">Loading Hebrew date...</span>
         </div>
     </div>
-
+    <div class="main-content">
+        <div class="side-panel" id="zmanim-panel">
+            <div class="section-title">Daily Zmanim</div>
+            <div class="zmanim-list">
+                <div id="sunrise">Sunrise: Loading...</div>
+                <div id="sunset">Sunset: Loading...</div>
+                <div id="shacharis">Shacharis: Loading...</div>
+                <div id="mincha">Mincha: Loading...</div>
+                <div id="maariv">Maariv: Loading...</div>
+            </div>
+        </div>
+        <div class="center-logo">
+            <img class="logo" src="DIESEL_FINAL_LOGO_3_COLOR-1-removebg-preview (1).png" alt="Diesel Funding Logo">
+        </div>
+        <div class="side-panel" id="shabbat-panel">
+            <div class="section-title">Shabbat Times</div>
+            <div class="shabbat-list">
+                <div id="candle-lighting">Candle Lighting: Loading...</div>
+                <div id="havdalah">Havdalah: Loading...</div>
+                <div id="parsha-name">Parsha: Loading...</div>
+            </div>
+        </div>
+    </div>
+    <div class="office-updates">
+        <div class="section-title">Office Updates</div>
+        <div id="update-text">No updates available.</div>
+        <img id="update-image" style="display:none;" alt="Office Update Image">
+    </div>
     <script>
-        // Configuration
+        // --- Configuration ---
         const config = {
             logoSrc: "DIESEL_FINAL_LOGO_3_COLOR-1-removebg-preview (1).png",
             latitude: 25.934242,
@@ -92,10 +142,29 @@
             updatesFile: "updates.json"
         };
 
-        // Set logo
+        // Set logo (if you want to change it later)
         document.querySelector('.logo').src = config.logoSrc;
 
-        // Fetch this week's Parsha using Hebcal API
+        // --- Dates ---
+        function renderDates() {
+            // English date
+            const today = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('greg-date').textContent = today.toLocaleDateString(undefined, options);
+
+            // Hebrew date via Hebcal
+            fetch(`https://www.hebcal.com/converter?cfg=json&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}&g2h=1`)
+                .then(r => r.json())
+                .then(data => {
+                    const hdate = `${data.hebrew} (${data.hm} ${data.hy})`;
+                    document.getElementById('heb-date').textContent = hdate;
+                })
+                .catch(() => {
+                    document.getElementById('heb-date').textContent = "Error loading Hebrew date.";
+                });
+        }
+
+        // --- Parsha ---
         async function fetchParsha() {
             const today = new Date();
             const year = today.getFullYear();
@@ -106,17 +175,13 @@
                 const response = await fetch(url);
                 const data = await response.json();
                 const parshaItem = data.items.find(item => item.category === "parashat");
-                if (parshaItem) {
-                    document.getElementById("parsha-name").textContent = parshaItem.title;
-                } else {
-                    document.getElementById("parsha-name").textContent = "No parsha found.";
-                }
+                document.getElementById("parsha-name").textContent = parshaItem ? `Parsha: ${parshaItem.title}` : "Parsha: N/A";
             } catch (error) {
-                document.getElementById("parsha-name").textContent = "Error loading parsha.";
+                document.getElementById("parsha-name").textContent = "Parsha: Error loading.";
             }
         }
 
-        // Fetch Shabbat times using Hebcal API
+        // --- Shabbat Times ---
         async function fetchShabbatTimes() {
             const today = new Date();
             const year = today.getFullYear();
@@ -125,9 +190,7 @@
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                // Find the next candle lighting and havdalah (after today)
-                let candleLighting = null;
-                let havdalah = null;
+                let candleLighting = null, havdalah = null;
                 for (const item of data.items) {
                     if (!candleLighting && item.category === "candle-lighting" && new Date(item.date) >= today) {
                         candleLighting = item;
@@ -142,22 +205,22 @@
                     document.getElementById("candle-lighting").textContent =
                         `Candle Lighting: ${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} on ${dt.toLocaleDateString()}`;
                 } else {
-                    document.getElementById("candle-lighting").textContent = "No candle lighting found.";
+                    document.getElementById("candle-lighting").textContent = "Candle Lighting: N/A";
                 }
                 if (havdalah) {
                     const dt = new Date(havdalah.date);
                     document.getElementById("havdalah").textContent =
                         `Havdalah: ${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} on ${dt.toLocaleDateString()}`;
                 } else {
-                    document.getElementById("havdalah").textContent = "No havdalah found.";
+                    document.getElementById("havdalah").textContent = "Havdalah: N/A";
                 }
             } catch (error) {
-                document.getElementById("candle-lighting").textContent = "Error loading Shabbat times.";
-                document.getElementById("havdalah").textContent = "";
+                document.getElementById("candle-lighting").textContent = "Candle Lighting: Error";
+                document.getElementById("havdalah").textContent = "Havdalah: Error";
             }
         }
 
-        // Fetch Zmanim using Hebcal API
+        // --- Zmanim ---
         async function fetchZmanim() {
             const today = new Date();
             const year = today.getFullYear();
@@ -174,15 +237,15 @@
                 document.getElementById("mincha").textContent = `Mincha: ${times.minchaGedola ? new Date(times.minchaGedola).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
                 document.getElementById("maariv").textContent = `Maariv: ${times.tzeit42min ? new Date(times.tzeit42min).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
             } catch (error) {
-                document.getElementById("sunrise").textContent = "Error loading Zmanim.";
-                document.getElementById("sunset").textContent = "";
-                document.getElementById("shacharis").textContent = "";
-                document.getElementById("mincha").textContent = "";
-                document.getElementById("maariv").textContent = "";
+                document.getElementById("sunrise").textContent = "Sunrise: Error";
+                document.getElementById("sunset").textContent = "Sunset: Error";
+                document.getElementById("shacharis").textContent = "Shacharis: Error";
+                document.getElementById("mincha").textContent = "Mincha: Error";
+                document.getElementById("maariv").textContent = "Maariv: Error";
             }
         }
 
-        // Fetch office updates from JSON file (optional, can remove if not used)
+        // --- Office Updates (optional) ---
         async function fetchOfficeUpdates() {
             try {
                 const response = await fetch(config.updatesFile);
@@ -201,23 +264,19 @@
             }
         }
 
-        // Update local time every second
-        function updateLocalTime() {
-            const now = new Date();
-            document.getElementById("current-time").textContent = `Local Time: ${now.toLocaleTimeString()}`;
-        }
-
-        // Initialize
+        // --- Initial Load & Intervals ---
+        renderDates();
         fetchParsha();
         fetchShabbatTimes();
         fetchZmanim();
         fetchOfficeUpdates();
-        setInterval(fetchParsha, 24 * 60 * 60 * 1000); // Update parsha daily
-        setInterval(fetchShabbatTimes, 24 * 60 * 60 * 1000); // Update Shabbat times daily
-        setInterval(fetchZmanim, 24 * 60 * 60 * 1000); // Update Zmanim daily
-        setInterval(fetchOfficeUpdates, 5 * 60 * 1000); // Check updates every 5 minutes
-        setInterval(updateLocalTime, 1000); // Update time every second
-        updateLocalTime();
+
+        setInterval(renderDates, 60 * 60 * 1000); // Update dates every hour
+        setInterval(fetchParsha, 6 * 60 * 60 * 1000); // Parsha (rarely changes)
+        setInterval(fetchShabbatTimes, 60 * 60 * 1000); // Shabbat times hourly
+        setInterval(fetchZmanim, 10 * 60 * 1000); // Zmanim every 10 min
+        setInterval(fetchOfficeUpdates, 5 * 60 * 1000); // Office updates every 5 min
+
     </script>
 </body>
 </html>
