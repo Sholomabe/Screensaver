@@ -75,7 +75,7 @@
             max-width: 1500px;
             width: 110%;
             height: auto;
-            margin: 50px 0 60px 0;
+            margin: 50px 0 50px 0;
             display: block;
         }
         .section-title {
@@ -266,15 +266,16 @@ async function fetchParsha() {
 // Always show the next candle-lighting and havdalah, even if a week away
 async function fetchShabbatTimes() {
     const today = new Date();
-    const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}&M=on&b=21`;
+    // Fetch 40 future events to ensure we catch the next candle lighting, even if it's next week
+    const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}&M=on&b=40`;
     try {
         const response = await fetch(url);
         const data = await response.json();
         const now = new Date();
 
-        // Find the next candle-lighting after right now
+        // Find the next candle-lighting event (today or later)
         const candleLighting = data.items.find(item =>
-            item.category === "candle-lighting" && new Date(item.date) > now
+            item.category === "candle-lighting" && new Date(item.date) >= now
         );
         if (candleLighting) {
             const dt = new Date(candleLighting.date);
@@ -284,9 +285,9 @@ async function fetchShabbatTimes() {
             document.getElementById("candle-lighting").textContent = "Candle Lighting: N/A";
         }
 
-        // Find the next havdalah after right now
+        // Find the next havdalah event (today or later)
         const havdalah = data.items.find(item =>
-            item.category === "havdalah" && new Date(item.date) > now
+            item.category === "havdalah" && new Date(item.date) >= now
         );
         if (havdalah) {
             const dt = new Date(havdalah.date);
@@ -298,6 +299,8 @@ async function fetchShabbatTimes() {
     } catch (error) {
         document.getElementById("candle-lighting").textContent = "Candle Lighting: Error";
         document.getElementById("havdalah").textContent = "Havdalah: Error";
+    }
+}
     }
 }
 
