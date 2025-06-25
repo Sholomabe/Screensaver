@@ -1,28 +1,223 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Hebcal Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Screensaver</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            overflow: auto;
+        }
+        .container {
+            max-width: 80%;
+            display: block;
+        }
+        .logo {
+            max-width: 300px;
+            margin-bottom: 10px;
+        }
+        img.update-image {
+            max-width: 300px;
+            max-height: 300px;
+            margin-bottom: 10px;
+            display: none;
+        }
+        .parsha {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .work-info {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .shabbat-times, .zmanim-times, .office-updates {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .local-time {
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
-  <h2>This Week's Parsha</h2>
-  <p id="parsha-name">Loading...</p>
-  <script>
-    alert("JS is running!"); // REMOVE THIS after confirming JS runs.
-    async function fetchParsha() {
-      try {
-        const response = await fetch('https://www.hebcal.com/shabbat?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York');
-        const data = await response.json();
-        const parshaItem = data.items.find(item => item.category === "parashat");
-        if (parshaItem) {
-          document.getElementById("parsha-name").textContent = parshaItem.title;
-        } else {
-          document.getElementById("parsha-name").textContent = "No parsha found.";
+    <div class="container">
+        <img class="logo" src="DIESEL_FINAL_LOGO_3_COLOR-1-removebg-preview (1).png" alt="Diesel Funding Logo">
+        <div class="parsha">
+            <h2>This Week's Parsha</h2>
+            <p id="parsha-name">Loading...</p>
+        </div>
+        <div class="work-info">
+            <h1>Diesel Funding</h1>
+        </div>
+        <div class="shabbat-times">
+            <h2>Shabbat Times</h2>
+            <p id="candle-lighting">Candle Lighting: Loading...</p>
+            <p id="havdalah">Havdalah: Loading...</p>
+        </div>
+        <div class="zmanim-times">
+            <h2>Daily Zmanim</h2>
+            <p id="sunrise">Sunrise: Loading...</p>
+            <p id="sunset">Sunset: Loading...</p>
+            <p id="shacharis">Shacharis: Loading...</p>
+            <p id="mincha">Mincha: Loading...</p>
+            <p id="maariv">Maariv: Loading...</p>
+        </div>
+        <div class="office-updates">
+            <h2>Office Updates</h2>
+            <p id="update-text">No updates available.</p>
+            <img id="update-image" class="update-image" alt="Office Image">
+        </div>
+        <div class="local-time">
+            <p id="current-time">Local Time: Loading...</p>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const config = {
+            logoSrc: "DIESEL_FINAL_LOGO_3_COLOR-1-removebg-preview (1).png",
+            latitude: 25.934242,
+            longitude: -80.164398,
+            timezone: "America/New_York",
+            updatesFile: "updates.json"
+        };
+
+        // Set logo
+        document.querySelector('.logo').src = config.logoSrc;
+
+        // Fetch this week's Parsha using Hebcal API
+        async function fetchParsha() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth() + 1;
+            const day = today.getDate();
+            const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=${config.latitude}&longitude=${config.longitude}&tzid=${config.timezone}&gy=${year}&gm=${month}&gd=${day}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const parshaItem = data.items.find(item => item.category === "parashat");
+                if (parshaItem) {
+                    document.getElementById("parsha-name").textContent = parshaItem.title;
+                } else {
+                    document.getElementById("parsha-name").textContent = "No parsha found.";
+                }
+            } catch (error) {
+                document.getElementById("parsha-name").textContent = "Error loading parsha.";
+            }
         }
-      } catch (err) {
-        document.getElementById("parsha-name").textContent = "Fetch error: " + err;
-      }
-    }
-    fetchParsha();
-  </script>
+
+        // Fetch Shabbat times using Hebcal API
+        async function fetchShabbatTimes() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth() + 1;
+            const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=${config.latitude}&longitude=${config.longitude}&tzid=${config.timezone}&M=on&gy=${year}&gm=${month}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                // Find the next candle lighting and havdalah (after today)
+                let candleLighting = null;
+                let havdalah = null;
+                for (const item of data.items) {
+                    if (!candleLighting && item.category === "candle-lighting" && new Date(item.date) >= today) {
+                        candleLighting = item;
+                    }
+                    if (!havdalah && item.category === "havdalah" && new Date(item.date) >= today) {
+                        havdalah = item;
+                    }
+                    if (candleLighting && havdalah) break;
+                }
+                if (candleLighting) {
+                    const dt = new Date(candleLighting.date);
+                    document.getElementById("candle-lighting").textContent =
+                        `Candle Lighting: ${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} on ${dt.toLocaleDateString()}`;
+                } else {
+                    document.getElementById("candle-lighting").textContent = "No candle lighting found.";
+                }
+                if (havdalah) {
+                    const dt = new Date(havdalah.date);
+                    document.getElementById("havdalah").textContent =
+                        `Havdalah: ${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} on ${dt.toLocaleDateString()}`;
+                } else {
+                    document.getElementById("havdalah").textContent = "No havdalah found.";
+                }
+            } catch (error) {
+                document.getElementById("candle-lighting").textContent = "Error loading Shabbat times.";
+                document.getElementById("havdalah").textContent = "";
+            }
+        }
+
+        // Fetch Zmanim using Hebcal API
+        async function fetchZmanim() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const url = `https://www.hebcal.com/zmanim?cfg=json&latitude=${config.latitude}&longitude=${config.longitude}&tzid=${config.timezone}&date=${year}-${month}-${day}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const times = data.times;
+                document.getElementById("sunrise").textContent = `Sunrise: ${times.sunrise ? new Date(times.sunrise).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
+                document.getElementById("sunset").textContent = `Sunset: ${times.sunset ? new Date(times.sunset).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
+                document.getElementById("shacharis").textContent = `Shacharis: ${times.alotHaShachar ? new Date(times.alotHaShachar).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
+                document.getElementById("mincha").textContent = `Mincha: ${times.minchaGedola ? new Date(times.minchaGedola).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
+                document.getElementById("maariv").textContent = `Maariv: ${times.tzeit42min ? new Date(times.tzeit42min).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
+            } catch (error) {
+                document.getElementById("sunrise").textContent = "Error loading Zmanim.";
+                document.getElementById("sunset").textContent = "";
+                document.getElementById("shacharis").textContent = "";
+                document.getElementById("mincha").textContent = "";
+                document.getElementById("maariv").textContent = "";
+            }
+        }
+
+        // Fetch office updates from JSON file (optional, can remove if not used)
+        async function fetchOfficeUpdates() {
+            try {
+                const response = await fetch(config.updatesFile);
+                const data = await response.json();
+                document.getElementById("update-text").textContent = data.text || "No updates available.";
+                const imgElement = document.getElementById("update-image");
+                if (data.image) {
+                    imgElement.src = data.image;
+                    imgElement.style.display = "block";
+                } else {
+                    imgElement.style.display = "none";
+                }
+            } catch (error) {
+                document.getElementById("update-text").textContent = "Error loading updates.";
+                document.getElementById("update-image").style.display = "none";
+            }
+        }
+
+        // Update local time every second
+        function updateLocalTime() {
+            const now = new Date();
+            document.getElementById("current-time").textContent = `Local Time: ${now.toLocaleTimeString()}`;
+        }
+
+        // Initialize
+        fetchParsha();
+        fetchShabbatTimes();
+        fetchZmanim();
+        fetchOfficeUpdates();
+        setInterval(fetchParsha, 24 * 60 * 60 * 1000); // Update parsha daily
+        setInterval(fetchShabbatTimes, 24 * 60 * 60 * 1000); // Update Shabbat times daily
+        setInterval(fetchZmanim, 24 * 60 * 60 * 1000); // Update Zmanim daily
+        setInterval(fetchOfficeUpdates, 5 * 60 * 1000); // Check updates every 5 minutes
+        setInterval(updateLocalTime, 1000); // Update time every second
+        updateLocalTime();
+    </script>
 </body>
 </html>
