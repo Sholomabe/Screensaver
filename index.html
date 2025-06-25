@@ -101,11 +101,11 @@
             const year = today.getFullYear();
             const month = today.getMonth() + 1;
             const day = today.getDate();
-            // The API will return the next Shabbat's parsha
             const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=${config.latitude}&longitude=${config.longitude}&tzid=${config.timezone}&gy=${year}&gm=${month}&gd=${day}`;
             try {
                 const response = await fetch(url);
                 const data = await response.json();
+                // Find the first parsha after today (should be this week's)
                 const parshaItem = data.items.find(item => item.category === "parashat");
                 if (parshaItem) {
                     document.getElementById("parsha-name").textContent = parshaItem.title;
@@ -129,5 +129,17 @@
                 const items = data.items.filter(item => item.category === "candle-lighting" || item.category === "havdalah");
                 if (items.length > 0) {
                     items.forEach(item => {
-                        const time = new Date(item.date).toLocaleTimeString
+                        const time = new Date(item.date).toLocaleTimeString();
+                        if (item.category === "candle-lighting") {
+                            document.getElementById("candle-lighting").textContent = `Candle Lighting: ${time} on ${item.title}`;
+                        } else if (item.category === "havdalah") {
+                            document.getElementById("havdalah").textContent = `Havdalah: ${time} on ${item.title}`;
+                        }
+                    });
+                } else {
+                    document.getElementById("candle-lighting").textContent = "No Shabbat times available.";
+                    document.getElementById("havdalah").textContent = "";
+                }
+            } catch (error) {
+                document.getElementById("candle
 
