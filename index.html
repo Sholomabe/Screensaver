@@ -16,21 +16,6 @@
             box-sizing: border-box;
             transition: background 0.2s, color 0.2s, font-size 0.2s, font-family 0.2s; /* Smooth transitions */
         }
-        .settings-bar {
-            width: 100vw;
-            background: #222;
-            color: #fff;
-            padding: 12px 0 8px 0;
-            text-align: center;
-            font-size: 1.1em;
-            border-bottom: 1px solid #333;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        .settings-bar label, .settings-bar select, .settings-bar input {
-            margin: 0 8px;
-        }
         /* ... rest of your CSS ... */
         /* (Your code below remains unchanged) */
         .top-bar {
@@ -142,34 +127,22 @@
     </style>
 </head>
 <body>
-    <!-- SETTINGS BAR: Add just after <body> -->
-    <div class="settings-bar">
-        <label for="fontSelector">Font:</label>
-        <select id="fontSelector">
-            <option value="Arial, sans-serif">Arial</option>
-            <option value="'Times New Roman', serif">Times New Roman</option>
-            <option value="Courier, monospace">Courier</option>
-            <option value="Georgia, serif">Georgia</option>
-            <option value="Verdana, sans-serif">Verdana</option>
-        </select>
-
-        <label for="fontSizeSelector">Size:</label>
-        <select id="fontSizeSelector">
-            <option value="16px">Small</option>
-            <option value="20px" selected>Medium</option>
-            <option value="28px">Large</option>
-            <option value="36px">X-Large</option>
-        </select>
-
-        <label for="textColorPicker">Text color:</label>
-        <input type="color" id="textColorPicker" value="#ffffff">
-
-        <label for="bgColorPicker">Background:</label>
-        <input type="color" id="bgColorPicker" value="#000000">
-    </div>
-
+  <button id="openSettingsBtn" style="
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #222;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    font-size: 2em;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 2000;
+" title="Settings">&#9881;</button>
     <!-- Your original code below (unchanged) -->
-    <div class="top-bar">
         <div class="dates">
             <span id="greg-date">Loading English date...</span>
             <span id="heb-date">Loading Hebrew date...</span>
@@ -204,64 +177,7 @@
         <img id="update-image" style="display:none;" alt="Office Update Image">
     </div>
     <script>
-        // --- SETTINGS LOGIC: Add at the very top of your script ---
-
-        // Utility to apply settings from localStorage or defaults
-        function applyUserSettings() {
-            // Font family
-            const font = localStorage.getItem('font') || "Arial, sans-serif";
-            document.body.style.fontFamily = font;
-            const fontSelector = document.getElementById('fontSelector');
-            if (fontSelector) fontSelector.value = font;
-
-            // Font size
-            const fontSize = localStorage.getItem('fontSize') || "20px";
-            document.body.style.fontSize = fontSize;
-            const fontSizeSelector = document.getElementById('fontSizeSelector');
-            if (fontSizeSelector) fontSizeSelector.value = fontSize;
-
-            // Text color
-            const textColor = localStorage.getItem('textColor') || "#ffffff";
-            document.body.style.color = textColor;
-            const textColorPicker = document.getElementById('textColorPicker');
-            if (textColorPicker) textColorPicker.value = textColor;
-
-            // Background color
-            const bgColor = localStorage.getItem('bgColor') || "#000000";
-            document.body.style.background = bgColor;
-            const bgColorPicker = document.getElementById('bgColorPicker');
-            if (bgColorPicker) bgColorPicker.value = bgColor;
-        }
-
-        // Setup listeners to update & save settings
-        function setupSettingsListeners() {
-            document.getElementById('fontSelector').addEventListener('change', function() {
-                document.body.style.fontFamily = this.value;
-                localStorage.setItem('font', this.value);
-            });
-            document.getElementById('fontSizeSelector').addEventListener('change', function() {
-                document.body.style.fontSize = this.value;
-                localStorage.setItem('fontSize', this.value);
-            });
-            document.getElementById('textColorPicker').addEventListener('input', function() {
-                document.body.style.color = this.value;
-                localStorage.setItem('textColor', this.value);
-            });
-            document.getElementById('bgColorPicker').addEventListener('input', function() {
-                document.body.style.background = this.value;
-                localStorage.setItem('bgColor', this.value);
-            });
-        }
-
-        // Call settings logic as soon as DOM is ready
-        document.addEventListener('DOMContentLoaded', function() {
-            applyUserSettings();
-            setupSettingsListeners();
-        });
-
-        // --- Your original script continues below ---
-
-        // --- Configuration ---
+     
         const config = {
             logoSrc: "DIESEL_FINAL_LOGO_3_COLOR-1-removebg-preview (1).png",
             latitude: 25.934242,
@@ -325,3 +241,6 @@
                     }
                     if (!havdalah && item*
 
+                        document.getElementById('openSettingsBtn').onclick = function() {
+    window.location.href = 'settings.html';
+};
