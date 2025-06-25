@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Change Appearance Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: #222; color: #fff; font-family: Arial, sans-serif; }
+        .container { max-width: 400px; margin: 40px auto; padding: 32px; background: #333; border-radius: 16px; }
+        h2 { text-align: center; }
+        label { display: block; margin: 18px 0 8px 0; }
+        select, input[type="color"] { width: 100%; padding: 8px; border-radius: 8px; border: none; }
+        button { margin-top: 24px; width: 100%; padding: 12px; border: none; border-radius: 8px; background: #2a9d8f; color: #fff; font-size: 1.2em; cursor: pointer; }
+        button:hover { background: #21867a; }
+        .back-link { display: block; text-align: center; margin-top: 18px; color: #aaa; text-decoration: underline; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Appearance Settings</h2>
+        <label for="fontSelector">Font:</label>
+        <select id="fontSelector">
+            <option value="Arial, sans-serif">Arial</option>
+            <option value="'Times New Roman', serif">Times New Roman</option>
+            <option value="Courier, monospace">Courier</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="Verdana, sans-serif">Verdana</option>
+        </select>
+        <label for="fontSizeSelector">Font Size:</label>
+        <select id="fontSizeSelector">
+            <option value="16px">Small</option>
+            <option value="20px">Medium</option>
+            <option value="28px">Large</option>
+            <option value="36px">X-Large</option>
+        </select>
+        <label for="textColorPicker">Text Color:</label>
+        <input type="color" id="textColorPicker" value="#ffffff">
+        <label for="bgColorPicker">Background Color:</label>
+        <input type="color" id="bgColorPicker" value="#000000">
+        <button id="saveSettingsBtn">Save & Return</button>
+        <span class="back-link" onclick="window.location.href='index.html'">Cancel</span>
+    </div>
+    <script>
+        // Load saved settings
+        window.onload = function() {
+            document.getElementById('fontSelector').value = localStorage.getItem('font') || "Arial, sans-serif";
+            document.getElementById('fontSizeSelector').value = localStorage.getItem('fontSize') || "20px";
+            document.getElementById('textColorPicker').value = localStorage.getItem('textColor') || "#ffffff";
+            document.getElementById('bgColorPicker').value = localStorage.getItem('bgColor') || "#000000";
+        };
+
+        document.getElementById('saveSettingsBtn').onclick = function() {
+            localStorage.setItem('font', document.getElementById('fontSelector').value);
+            localStorage.setItem('fontSize', document.getElementById('fontSizeSelector').value);
+            localStorage.setItem('textColor', document.getElementById('textColorPicker').value);
+            localStorage.setItem('bgColor', document.getElementById('bgColorPicker').value);
+            window.location.href = "index.html";
+        };
+    </script>
+</body>
+</html>
