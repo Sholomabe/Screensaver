@@ -5,7 +5,16 @@
   <title>Screensaver</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden;}
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
     .settings-link {
       position: absolute;
       top: 20px;
@@ -16,56 +25,91 @@
       cursor: pointer;
       z-index: 20;
     }
-    #main-screensaver {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      user-select: none;
-      pointer-events: none;
+    #clock {
       position: absolute;
-      top: 0; left: 0;
-      z-index: 1;
+      top: 30px;
+      right: 40px;
+      font-size: 2.5vw;
+      font-weight: bold;
+      letter-spacing: 0.03em;
+      text-shadow: 0 1px 8px #222, 0 1px 2px #333;
+      z-index: 12;
+      text-align: right;
+      background: rgba(30,30,30,0.7);
+      padding: 10px 24px;
+      border-radius: 16px;
+      min-width: 170px;
+      pointer-events: auto;
+    }
+    #greg-date, #hebrew-date {
+      position: absolute;
+      top: 80px;
+      right: 40px;
+      font-size: 1.1vw;
+      color: #8fffa0;
+      text-align: right;
+      z-index: 12;
+      width: 18vw;
+      pointer-events: auto;
     }
     #center-logo {
-      display: block;
-      margin: 0 auto 2vw auto;
-      height: 120px;
-      max-width: 60vw;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -55%);
+      height: 240px; /* double the previous 120px */
+      max-width: 90vw;
       object-fit: contain;
       filter: drop-shadow(0 3px 16px #111);
+      z-index: 2;
       pointer-events: none;
     }
-    #clock {
-      font-size: 6vw;
-      letter-spacing: 0.06em;
-      font-weight: bold;
-      text-shadow: 0 3px 24px #222, 0 1px 2px #333;
-      margin-top: 2vw;
-      margin-bottom: 1vw;
-    }
-    #greg-date {
-      font-size: 2vw;
-      margin-bottom: 1vw;
-      color: #8fffa0;
-    }
-    #hebrew-date, #hebrew-parsha {
-      font-size: 1.7vw;
-      margin-bottom: 0.5vw;
-      color: #ffe082;
-      text-shadow: 0 2px 12px #111;
-      font-weight: bold;
-    }
-    #shabbat-times, #zmanim-today {
+    #zmanim-today {
+      position: absolute;
+      left: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(32,32,32,0.88);
+      padding: 22px 18px 22px 22px;
+      border-radius: 12px;
       font-size: 1.1vw;
-      margin-bottom: 0.3vw;
-      color: #8fffa0;
-      text-shadow: 0 1px 4px #111;
-      font-weight: 400;
+      color: #c2e3ff;
+      max-width: 26vw;
+      min-width: 210px;
+      box-shadow: 0 2px 10px #111;
+      pointer-events: auto;
+      z-index: 10;
+      text-align: left;
+      line-height: 2.1;
     }
-    #zmanim-today { color: #c2e3ff; }
+    #shabbat-parsha-container {
+      position: absolute;
+      right: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(32,32,32,0.88);
+      padding: 22px 22px 22px 18px;
+      border-radius: 12px;
+      font-size: 1.1vw;
+      color: #ffe082;
+      max-width: 26vw;
+      min-width: 210px;
+      box-shadow: 0 2px 10px #111;
+      pointer-events: auto;
+      z-index: 10;
+      text-align: right;
+      line-height: 2.1;
+    }
+    #hebrew-parsha {
+      font-size: 1.4vw;
+      color: #ffe082;
+      font-weight: bold;
+      margin-bottom: 0.5vw;
+    }
+    #shabbat-times {
+      color: #8fffa0;
+      font-size: 1vw;
+    }
     #update-texts {
       position: absolute;
       left: 32px;
@@ -81,11 +125,17 @@
       box-shadow: 0 2px 10px #111;
       pointer-events: auto;
     }
+    @media (max-width: 900px) {
+      #center-logo { height: 120px; }
+      #clock { font-size: 4vw; min-width: 110px; padding: 6px 10px;}
+      #greg-date, #hebrew-date { font-size: 2vw; width: 40vw; }
+      #zmanim-today, #shabbat-parsha-container { font-size: 2vw; min-width: 100px; max-width: 92vw; padding: 15px 10px;}
+    }
     @media (max-width: 600px) {
       #center-logo { height: 64px; }
-      #clock { font-size: 12vw; }
-      #greg-date, #hebrew-date, #hebrew-parsha { font-size: 4vw; }
-      #shabbat-times, #zmanim-today { font-size: 3vw; }
+      #clock { font-size: 7vw; }
+      #greg-date, #hebrew-date { font-size: 3vw; }
+      #zmanim-today, #shabbat-parsha-container { font-size: 3vw; min-width: 60px; padding: 7px 5px;}
       #update-texts { font-size: 1em; left: 4vw; bottom: 10vw; max-width: 90vw; min-width: 120px; }
       .settings-link { font-size: 1em; right: 10px;}
     }
@@ -153,16 +203,21 @@
   <!-- Settings link -->
   <span class="settings-link" onclick="window.location.href='settings.html'">Settings</span>
 
-  <!-- Main screensaver area -->
-  <div id="main-screensaver">
-    <!-- Logo in the center (replace src with your logo!) -->
-    <img id="center-logo" src="DIESEL_FINAL_LOGO_3_COLOR-1-removebg-preview (1).png" />
-    <div id="clock"></div>
-    <div id="greg-date"></div>
-    <div id="hebrew-date"></div>
+  <!-- Clock, Date, Hebrew Date in top right -->
+  <div id="clock"></div>
+  <div id="greg-date"></div>
+  <div id="hebrew-date"></div>
+
+  <!-- Center Logo -->
+  <img id="center-logo" src="DIESEL_FINAL_LOGO_3_COLOR-1-removebg-preview (1).png" alt="Logo" />
+
+  <!-- Daily zmanim (left) -->
+  <div id="zmanim-today"></div>
+
+  <!-- Parsha and Shabbat times (right) -->
+  <div id="shabbat-parsha-container">
     <div id="hebrew-parsha"></div>
     <div id="shabbat-times"></div>
-    <div id="zmanim-today"></div>
   </div>
 
   <!-- Office updates (lower left corner) -->
@@ -181,17 +236,24 @@
   </div>
 
   <script>
-    // CLOCK
+    // CLOCK (12-hour format)
+    function to12Hour(h, m, s = null) {
+      let hour = h % 12 || 12;
+      let ampm = h < 12 ? "AM" : "PM";
+      let mm = String(m).padStart(2, '0');
+      let ss = s !== null ? ':' + String(s).padStart(2, '0') : '';
+      return hour + ':' + mm + ss + ' ' + ampm;
+    }
     function updateClock() {
       var now = new Date();
-      var h = String(now.getHours()).padStart(2,'0');
-      var m = String(now.getMinutes()).padStart(2,'0');
-      var s = String(now.getSeconds()).padStart(2,'0');
-      document.getElementById('clock').textContent = h + ':' + m + ':' + s;
+      var h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+      document.getElementById('clock').textContent = to12Hour(h, m, s);
 
       // Gregorian date
       var opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
       document.getElementById('greg-date').textContent = now.toLocaleDateString(undefined, opts);
+
+      // Hebrew date is updated via Hebcal API
     }
     setInterval(updateClock, 1000);
     updateClock();
@@ -224,20 +286,29 @@
       if (['font', 'fontSize', 'textColor', 'bgColor'].includes(e.key)) applySettings();
     });
 
-    // HEBREW DATE, PARSHA, SHABBAT TIMES, ZMANIM
+    // HEBREW DATE, PARSHA, SHABBAT TIMES, ZMANIM (all times in 12-hour format)
     // Set to your location for accurate zmanim/shabbat times (default: NYC, geonameid 5128581)
     const geonameId = 5128581;
+    function to12HourStr(timestr) {
+      if (!timestr) return "";
+      let h = parseInt(timestr.substr(11,2),10);
+      let m = parseInt(timestr.substr(14,2),10);
+      let hour = h % 12 || 12;
+      let ampm = h < 12 ? "AM" : "PM";
+      return hour + ":" + String(m).padStart(2, '0') + " " + ampm;
+    }
     function updateHebcal() {
       const today = new Date();
       const iso = today.toISOString().slice(0,10);
 
-      // Hebrew date and parsha
+      // Hebrew date
       fetch(`https://www.hebcal.com/converter?cfg=json&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}&g2h=1`)
         .then(r=>r.json())
         .then(data=>{
           document.getElementById('hebrew-date').textContent = data.hebrew || "";
         });
 
+      // Parsha and shabbat times
       fetch(`https://www.hebcal.com/shabbat?cfg=json&geonameid=${geonameId}&start=${iso}&end=${iso}`)
         .then(r=>r.json())
         .then(data=>{
@@ -245,32 +316,32 @@
           if (data.items) {
             for (const item of data.items) {
               if (item.category === "parashat") parsha = "Parsha: " + item.hebrew;
-              if (item.category === "candles") shabbat = "Candle lighting: " + item.title.replace("Candle lighting: ","") + " (" + item.date.substr(11,5) + " local)";
-              if (item.category === "havdalah") shabbat += "<br>Havdalah: " + item.title.replace("Havdalah: ","") + " (" + item.date.substr(11,5) + " local)";
+              if (item.category === "candles") shabbat = "Candle lighting: " + to12HourStr(item.date) + " (" + item.title.replace("Candle lighting: ","") + ")";
+              if (item.category === "havdalah") shabbat += "<br>Havdalah: " + to12HourStr(item.date) + " (" + item.title.replace("Havdalah: ","") + ")";
             }
           }
           document.getElementById('hebrew-parsha').textContent = parsha;
           document.getElementById('shabbat-times').innerHTML = shabbat;
         });
 
-      // Zmanim/times for today
+      // Zmanim/times for today (left panel)
       fetch(`https://www.hebcal.com/zmanim?cfg=json&geonameid=${geonameId}&date=${iso}`)
         .then(r=>r.json())
         .then(z=>{
           let zm = [];
           if(z.times) {
-            if(z.times.alot_hashachar) zm.push("עלות השחר (Dawn): " + z.times.alot_hashachar.substr(11,5));
-            if(z.times.sunrise) zm.push("הנץ החמה (Sunrise): " + z.times.sunrise.substr(11,5));
-            if(z.times.sof_zman_shema) zm.push("סוף זמן ק\"ש: " + z.times.sof_zman_shema.substr(11,5));
-            if(z.times.sof_zman_tefila) zm.push("סוף זמן תפילה: " + z.times.sof_zman_tefila.substr(11,5));
-            if(z.times.chatzot) zm.push("חצות היום (Midday): " + z.times.chatzot.substr(11,5));
-            if(z.times.mincha_gedola) zm.push("מנחה גדולה: " + z.times.mincha_gedola.substr(11,5));
-            if(z.times.mincha_ketana) zm.push("מנחה קטנה: " + z.times.mincha_ketana.substr(11,5));
-            if(z.times.plag_hamincha) zm.push("פלג המנחה: " + z.times.plag_hamincha.substr(11,5));
-            if(z.times.sunset) zm.push("שקיעה (Sunset): " + z.times.sunset.substr(11,5));
-            if(z.times.tzeit_t3_stars) zm.push("צאת הכוכבים (Night): " + z.times.tzeit_t3_stars.substr(11,5));
+            if(z.times.alot_hashachar) zm.push("עלות השחר (Dawn): " + to12HourStr(z.times.alot_hashachar));
+            if(z.times.sunrise) zm.push("הנץ החמה (Sunrise): " + to12HourStr(z.times.sunrise));
+            if(z.times.sof_zman_shema) zm.push("סוף זמן ק\"ש: " + to12HourStr(z.times.sof_zman_shema));
+            if(z.times.sof_zman_tefila) zm.push("סוף זמן תפילה: " + to12HourStr(z.times.sof_zman_tefila));
+            if(z.times.chatzot) zm.push("חצות היום (Midday): " + to12HourStr(z.times.chatzot));
+            if(z.times.mincha_gedola) zm.push("מנחה גדולה: " + to12HourStr(z.times.mincha_gedola));
+            if(z.times.mincha_ketana) zm.push("מנחה קטנה: " + to12HourStr(z.times.mincha_ketana));
+            if(z.times.plag_hamincha) zm.push("פלג המנחה: " + to12HourStr(z.times.plag_hamincha));
+            if(z.times.sunset) zm.push("שקיעה (Sunset): " + to12HourStr(z.times.sunset));
+            if(z.times.tzeit_t3_stars) zm.push("צאת הכוכבים (Night): " + to12HourStr(z.times.tzeit_t3_stars));
           }
-          document.getElementById('zmanim-today').innerHTML = zm.join(" &bull; ");
+          document.getElementById('zmanim-today').innerHTML = zm.join("<br>");
         });
     }
     updateHebcal();
