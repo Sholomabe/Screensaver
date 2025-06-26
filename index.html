@@ -326,20 +326,6 @@
     const update = localStorage.getItem('officeUpdate') || 'No updates available.';
     document.getElementById("update-text").textContent = update;
 }
-                    const response = await fetch("updates.json");
-                    const data = await response.json();
-                    document.getElementById("update-text").textContent = data.text || "No updates available.";
-                    const imgElement = document.getElementById("update-image");
-                    if (data.image) {
-                        imgElement.src = data.image;
-                        imgElement.style.display = "block";
-                    } else {
-                        imgElement.style.display = "none";
-                    }
-                } catch (error) {
-                    document.getElementById("update-text").textContent = "Error loading updates.";
-                    document.getElementById("update-image").style.display = "none";
-                }
             }
 
             // Initial load and intervals
