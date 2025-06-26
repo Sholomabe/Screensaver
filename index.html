@@ -122,24 +122,24 @@
       pointer-events: none;
       transition: height 0.25s;
     }
-    /* GLASS PANELS: 30% smaller than before */
+    /* --- Key Panel Sizing --- */
     .glass-panel {
       background: var(--glass-bg);
       border-radius: var(--panel-radius);
       box-shadow: var(--box-shadow);
-      padding: 18px 19px 15px 19px; /* was 26px 28px 22px 28px */
-      min-width: 154px;  /* was 220px */
-      max-width: 22.4vw; /* was 32vw */
-      min-height: 84px;  /* was 120px */
+      padding: 28px 32px 25px 32px;
+      min-width: 225px;
+      max-width: 28vw;
+      min-height: 130px;
       backdrop-filter: var(--glass-blur);
       display: flex;
       flex-direction: column;
       align-items: flex-start;
     }
     .panel-header {
-      font-size: 0.88em; /* 30% smaller than 1.25em */
+      font-size: 1.18em;
       font-weight: 700;
-      margin-bottom: 9px;
+      margin-bottom: 13px;
       letter-spacing: 0.09em;
       width: 100%;
       text-align: left;
@@ -150,58 +150,58 @@
     #zmanim-today {
       position: absolute;
       left: 38px;
-      top: 50%;
+      top: 52%;
       transform: translateY(-50%);
       color: #c2e3ff;
       z-index: 10;
       text-align: left;
-      line-height: 1.6;
-      font-size: 0.7em; /* 30% smaller than 1em */
+      line-height: 1.7;
+      font-size: 1.09em;
     }
     #zmanim-today .panel-header {
       color: var(--zmanim-header);
       border-bottom: 2px solid #40e0ff30;
-      margin-bottom: 7px;
+      margin-bottom: 10px;
       padding-bottom: 2px;
-      font-size: 0.95em;
+      font-size: 1.18em;
     }
     #zmanim-list {
       width: 100%;
-      font-size: 0.8em; /* 30% smaller than 1.14em */
+      font-size: 1.07em;
       word-break: break-all;
       font-weight: 600;
     }
     #shabbat-parsha-container {
       position: absolute;
       right: 38px;
-      top: 50%;
+      top: 52%;
       transform: translateY(-50%);
       color: #ffe082;
       z-index: 10;
       text-align: right;
-      line-height: 1.6;
-      font-size: 0.7em;
+      line-height: 1.7;
+      font-size: 1.09em;
     }
     #shabbat-parsha-container .panel-header {
       color: var(--shabbat-header);
       border-bottom: 2px solid #ffe08240;
-      margin-bottom: 7px;
+      margin-bottom: 10px;
       padding-bottom: 2px;
       text-align: right;
-      font-size: 0.95em;
+      font-size: 1.18em;
     }
     #hebrew-parsha {
-      font-size: 0.8em;
+      font-size: 1.08em;
       color: #fff1c1;
       font-weight: 700;
-      margin-bottom: 0.2vw;
+      margin-bottom: 0.4vw;
       letter-spacing: 0.03em;
     }
     #shabbat-times {
       color: #8fffa0;
-      font-size: 0.8em;
+      font-size: 1.07em;
       font-weight: 600;
-      margin-top: 0.09em;
+      margin-top: 0.13em;
       letter-spacing: 0.01em;
     }
     #update-texts {
@@ -238,7 +238,7 @@
       #center-logo { height: 140px; }
       #clock { font-size: 4vw; min-width: 110px; padding: 6px 10px;}
       #date-container { font-size: 1.3vw; min-width: 160px; padding: 12px 8px; }
-      .glass-panel { min-width: 80px; padding: 7px 3px 7px 4px; }
+      .glass-panel { min-width: 120px; padding: 14px 8px 14px 10px; }
       #update-texts { font-size: 1em; min-width: 140px; padding: 12px 10px;}
     }
     @media (max-width: 600px) {
@@ -250,6 +250,7 @@
       .settings-link { width: 36px; height: 36px; right: 12px; bottom: 12px;}
       .settings-link svg { width: 19px; height: 19px;}
     }
+    /* Music Player Styles (unchanged) */
     #music-float {
       position: fixed;
       bottom: 24px;
