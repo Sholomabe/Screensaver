@@ -43,10 +43,14 @@
     <!-- OFFICE UPDATE SECTION -->
     <hr style="margin: 30px 0 20px 0; border: none; border-top: 1px solid #444;">
     <h2>Office Update</h2>
-    <label for="officeUpdateInput">Write an office update (appears on main screen):</label>
-    <textarea id="officeUpdateInput" rows="4" placeholder="Type your office update here..."></textarea>
-    <button type="button" onclick="saveOfficeUpdate()">Save Office Update</button>
-    <p id="updateStatus"></p>
+    <label>Office Updates (up to 5):</label>
+<textarea id="officeUpdateInput1" rows="2" placeholder="First office update"></textarea>
+<textarea id="officeUpdateInput2" rows="2" placeholder="Second office update"></textarea>
+<textarea id="officeUpdateInput3" rows="2" placeholder="Third office update"></textarea>
+<textarea id="officeUpdateInput4" rows="2" placeholder="Fourth office update"></textarea>
+<textarea id="officeUpdateInput5" rows="2" placeholder="Fifth office update"></textarea>
+<button type="button" onclick="saveOfficeUpdates()">Save Office Updates</button>
+<p id="updateStatus"></p>
     <!-- END OFFICE UPDATE SECTION -->
 
     <button id="saveSettingsBtn">Save & Return</button>
@@ -72,12 +76,25 @@
     };
 
     // Save the office update to localStorage
-    function saveOfficeUpdate() {
-      const text = document.getElementById('officeUpdateInput').value;
-      localStorage.setItem('officeUpdate', text);
-      document.getElementById('updateStatus').textContent = 'Update saved!';
-      setTimeout(() => { document.getElementById('updateStatus').textContent = ''; }, 2000);
+    function saveOfficeUpdates() {
+    for (let i = 1; i <= 5; i++) {
+        const text = document.getElementById('officeUpdateInput' + i).value;
+        localStorage.setItem('officeUpdate' + i, text);
     }
+    document.getElementById('updateStatus').textContent = 'Updates saved!';
+    setTimeout(() => { document.getElementById('updateStatus').textContent = ''; }, 2000);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('fontSelector').value = localStorage.getItem('font') || "Arial, sans-serif";
+    document.getElementById('fontSizeSelector').value = localStorage.getItem('fontSize') || "20px";
+    document.getElementById('textColorPicker').value = localStorage.getItem('textColor') || "#ffffff";
+    document.getElementById('bgColorPicker').value = localStorage.getItem('bgColor') || "#000000";
+    // Load each office update
+    for (let i = 1; i <= 5; i++) {
+        document.getElementById('officeUpdateInput' + i).value = localStorage.getItem('officeUpdate' + i) || '';
+    }
+});
   </script>
 </body>
 </html>
