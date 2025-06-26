@@ -477,5 +477,48 @@
       const query = document.getElementById('music-search').value.trim();
       if (!query) return;
       document.getElementById('music-results').innerHTML = 'Searching...';
-      fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=8*
-
+      fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=8&q=${encodeURIComponent(query)}&key=${YOUTUBE_API_KEY}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.items || data.items.length === 0) {
+            document.getElementById('music-results').innerHTML = "No results found.";
+            return;
+          }
+          document.getElementById('music-results').innerHTML = data.items.map(item =>
+            `<div class="music-result" onclick="playMusic('${item.id.videoId}')">
+              <b>${item.snippet.title}</b><br>
+              <span style='font-size:0.9em;color:#bbb;'>${item.snippet.channelTitle}</span>
+            </div>`
+          ).join('');
+        })
+        .catch(e => { document.getElementById('music-results').innerHTML = "Error searching."; });
+    }
+    function playMusic(videoId) {
+      document.getElementById('music-player').src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+      document.getElementById('music-results').innerHTML = "";
+    }
+    document.getElementById('music-search').addEventListener('keydown', function(e) {
+      if (e.key === "Enter") searchMusic();
+    });
+    // Make music-float draggable
+    (function makeDraggable() {
+      const el = document.getElementById('music-float');
+      const header = document.getElementById('music-header');
+      let offsetX = 0, offsetY = 0, isDown = false;
+      header.onmousedown = function(e) {
+        isDown = true;
+        offsetX = el.offsetLeft - e.clientX;
+        offsetY = el.offsetTop - e.clientY;
+        document.onmousemove = function(e2) {
+          if (!isDown) return;
+          el.style.right = 'auto';
+          el.style.bottom = 'auto';
+          el.style.left = (e2.clientX + offsetX) + 'px';
+          el.style.top = (e2.clientY + offsetY) + 'px';
+        };
+        document.onmouseup = function() { isDown = false; document.onmousemove = null; };
+      };
+    })();
+  </script>
+</body>
+</html>
