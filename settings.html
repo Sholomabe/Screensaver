@@ -9,10 +9,12 @@
     .container { max-width: 400px; margin: 40px auto; padding: 32px; background: #333; border-radius: 16px; }
     h2 { text-align: center; }
     label { display: block; margin: 18px 0 8px 0; }
-    select, input[type="color"] { width: 100%; padding: 8px; border-radius: 8px; border: none; }
+    select, input[type="color"], textarea { width: 100%; padding: 8px; border-radius: 8px; border: none; }
+    textarea { min-height: 70px; resize: vertical; font-size: 1em; }
     button { margin-top: 24px; width: 100%; padding: 12px; border: none; border-radius: 8px; background: #2a9d8f; color: #fff; font-size: 1.2em; cursor: pointer; }
     button:hover { background: #21867a; }
     .back-link { display: block; text-align: center; margin-top: 18px; color: #aaa; text-decoration: underline; cursor: pointer; }
+    #updateStatus { text-align: center; color: #8fffa0; margin-top: 12px; font-size: 1.1em; }
   </style>
 </head>
 <body>
@@ -37,6 +39,16 @@
     <input type="color" id="textColorPicker" value="#ffffff">
     <label for="bgColorPicker">Background Color:</label>
     <input type="color" id="bgColorPicker" value="#000000">
+
+    <!-- OFFICE UPDATE SECTION -->
+    <hr style="margin: 30px 0 20px 0; border: none; border-top: 1px solid #444;">
+    <h2>Office Update</h2>
+    <label for="officeUpdateInput">Write an office update (appears on main screen):</label>
+    <textarea id="officeUpdateInput" rows="4" placeholder="Type your office update here..."></textarea>
+    <button type="button" onclick="saveOfficeUpdate()">Save Office Update</button>
+    <p id="updateStatus"></p>
+    <!-- END OFFICE UPDATE SECTION -->
+
     <button id="saveSettingsBtn">Save & Return</button>
     <span class="back-link" onclick="window.location.href='index.html'">Cancel</span>
   </div>
@@ -47,6 +59,8 @@
       document.getElementById('fontSizeSelector').value = localStorage.getItem('fontSize') || "20px";
       document.getElementById('textColorPicker').value = localStorage.getItem('textColor') || "#ffffff";
       document.getElementById('bgColorPicker').value = localStorage.getItem('bgColor') || "#000000";
+      // Load office update into textarea if it exists
+      document.getElementById('officeUpdateInput').value = localStorage.getItem('officeUpdate') || '';
     };
 
     document.getElementById('saveSettingsBtn').onclick = function() {
@@ -56,6 +70,14 @@
       localStorage.setItem('bgColor', document.getElementById('bgColorPicker').value);
       window.location.href = "index.html";
     };
+
+    // Save the office update to localStorage
+    function saveOfficeUpdate() {
+      const text = document.getElementById('officeUpdateInput').value;
+      localStorage.setItem('officeUpdate', text);
+      document.getElementById('updateStatus').textContent = 'Update saved!';
+      setTimeout(() => { document.getElementById('updateStatus').textContent = ''; }, 2000);
+    }
   </script>
 </body>
 </html>
