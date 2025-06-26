@@ -44,20 +44,19 @@
     <hr style="margin: 30px 0 20px 0; border: none; border-top: 1px solid #444;">
     <h2>Office Update</h2>
     <label>Office Updates (up to 5):</label>
-<textarea id="officeUpdateInput1" rows="2" placeholder="First office update"></textarea>
-<textarea id="officeUpdateInput2" rows="2" placeholder="Second office update"></textarea>
-<textarea id="officeUpdateInput3" rows="2" placeholder="Third office update"></textarea>
-<textarea id="officeUpdateInput4" rows="2" placeholder="Fourth office update"></textarea>
-<textarea id="officeUpdateInput5" rows="2" placeholder="Fifth office update"></textarea>
-<button type="button" onclick="saveOfficeUpdates()">Save Office Updates</button>
-<p id="updateStatus"></p>
+    <textarea id="officeUpdateInput1" rows="2" placeholder="First office update"></textarea>
+    <textarea id="officeUpdateInput2" rows="2" placeholder="Second office update"></textarea>
+    <textarea id="officeUpdateInput3" rows="2" placeholder="Third office update"></textarea>
+    <textarea id="officeUpdateInput4" rows="2" placeholder="Fourth office update"></textarea>
+    <textarea id="officeUpdateInput5" rows="2" placeholder="Fifth office update"></textarea>
+    <button type="button" onclick="saveOfficeUpdates()">Save Office Updates</button>
+    <p id="updateStatus"></p>
     <!-- END OFFICE UPDATE SECTION -->
 
     <button id="saveSettingsBtn">Save & Return</button>
     <span class="back-link" onclick="window.location.href='index.html'">Cancel</span>
   </div>
   <script>
-    <script>
     // Save the office updates to localStorage
     function saveOfficeUpdates() {
         for (let i = 1; i <= 5; i++) {
@@ -86,7 +85,6 @@
         localStorage.setItem('bgColor', document.getElementById('bgColorPicker').value);
         window.location.href = "index.html";
     };
-</script>
   </script>
 </body>
 </html>
