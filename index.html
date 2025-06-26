@@ -1,338 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Work Screensaver</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            background: #000;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            font-size: 20px;
-            min-height: 100vh;
-            height: 100%;
-            box-sizing: border-box;
-        }
-        #clock {
-            position: fixed;
-            top: 20px;
-            left: 32px;
-            font-size: 2.2em;
-            letter-spacing: 2px;
-            user-select: none;
-        }
-        .top-bar {
-            width: 100vw;
-            text-align: center;
-            font-size: 2.5em;
-            padding: 30px 0 10px 0;
-        }
-        .dates {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            align-items: center;
-        }
-        .main-content {
-            display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-            justify-content: center;
-            width: 100vw;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            min-height: 60vh;
-        }
-        .side-panel {
-            flex: 1 0 600px;
-            max-width: 900px;
-            padding: 25px 15px 25px 40px;
-            margin-top: 35px;
-            box-sizing: border-box;
-            min-width: 340px;
-        }
-        .center-logo {
-            flex: 0 1 1500px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-width: 320px;
-            margin-top: 50px;
-        }
-        .logo {
-            max-width: 1500px;
-            width: 110%;
-            height: auto;
-            margin: 50px 0 30px 0;
-            display: block;
-        }
-        .section-title {
-            font-size: 3em;
-            margin-bottom: 20px;
-        }
-        .zmanim-list, .shabbat-list {
-            text-align: left;
-            font-size: 2.3em;
-            margin-bottom: 20px;
-            line-height: 1.22;
-        }
-        .office-updates {
-            width: 100vw;
-            text-align: center;
-            padding: 22px 0 10px 0;
-            font-size: 1.35em;
-            background: rgba(255,255,255,0.07);
-            border-top: 1px solid #444;
-        }
-        #openSettingsBtn {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: #222;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 56px;
-            height: 56px;
-            font-size: 2em;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-            cursor: pointer;
-            z-index: 2000;
-        }
-        @media (max-width: 1300px) {
-            .main-content {
-                flex-direction: column;
-                align-items: center;
-            }
-            .side-panel, .center-logo {
-                max-width: unset;
-                min-width: unset;
-                width: 95vw;
-            }
-            .logo {
-                max-width: 90vw;
-            }
-        }
-        @media (max-width: 900px) {
-            .main-content {
-                flex-direction: column;
-                align-items: center;
-            }
-            .side-panel, .center-logo {
-                max-width: unset;
-                min-width: unset;
-                width: 98vw;
-            }
-            .logo {
-                max-width: 90vw;
-            }
-            .zmanim-list, .shabbat-list {
-                font-size: 1.1em;
-            }
-            .section-title {
-                font-size: 1.8em;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Screensaver</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { 
+      background: #000; 
+      color: #fff; 
+      font-family: Arial, sans-serif; 
+      margin: 0; 
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    #main-container {
+      text-align: center;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: inherit;
+    }
+    #update-texts {
+      margin: 30px 0 0 0;
+      font-size: 2em;
+      color: inherit;
+      max-width: 90vw;
+      word-break: break-word;
+    }
+    .settings-link {
+      position: absolute;
+      top: 20px;
+      right: 32px;
+      color: #bbb;
+      font-size: 1.2em;
+      text-decoration: underline;
+      cursor: pointer;
+      z-index: 10;
+    }
+    @media (max-width: 600px) {
+      #update-texts { font-size: 1.2em; }
+      .settings-link { font-size: 1em; right: 10px;}
+    }
+  </style>
 </head>
 <body>
-    <div id="clock"></div>
-    <div class="top-bar">
-        <div class="dates">
-            <span id="greg-date">Loading English date...</span>
-            <span id="heb-date">Loading Hebrew date...</span>
-        </div>
-    </div>
-    <div class="main-content">
-        <div class="side-panel" id="zmanim-panel">
-            <div class="section-title">Daily Zmanim</div>
-            <div class="zmanim-list">
-                <div id="sunrise">Sunrise: Loading...</div>
-                <div id="sunset">Sunset: Loading...</div>
-                <div id="shacharis">Shacharis: Loading...</div>
-                <div id="mincha">Mincha: Loading...</div>
-                <div id="maariv">Maariv: Loading...</div>
-            </div>
-        </div>
-        <div class="center-logo">
-            <img class="logo" src="DIESEL_FINAL_LOGO_3_COLOR-1-removebg-preview (1).png" alt="Diesel Funding Logo">
-        </div>
-        <div class="side-panel" id="shabbat-panel">
-            <div class="section-title">Shabbat Times</div>
-            <div class="shabbat-list">
-                <div id="parsha-name">Parsha: Loading...</div>
-                <div id="candle-lighting">Candle Lighting: Loading...</div>
-                <div id="havdalah">Havdalah: Loading...</div>
-            </div>
-        </div>
-    </div>
-    <div class="office-updates">
-        <div class="section-title">Office Updates</div>
-        <div id="update-text">No updates available.</div>
-    </div>
-    <button id="openSettingsBtn" title="Settings">&#9881;</button>
-    <script>
+  <div id="main-container">
+    <span class="settings-link" onclick="window.location.href='settings.html'">Settings</span>
+    <div id="update-texts">No updates available.</div>
+  </div>
+  <script>
+    // Apply saved appearance settings
+    function applySettings() {
+      document.body.style.fontFamily = localStorage.getItem('font') || "Arial, sans-serif";
+      document.body.style.fontSize = localStorage.getItem('fontSize') || "20px";
+      document.body.style.color = localStorage.getItem('textColor') || "#ffffff";
+      document.body.style.background = localStorage.getItem('bgColor') || "#000000";
+    }
+
+    // Fetch and display up to 5 office updates
+    function fetchOfficeUpdates() {
+      let hasUpdate = false;
+      let html = "";
+      for (let i = 1; i <= 5; i++) {
+        const update = localStorage.getItem('officeUpdate' + i);
+        if (update && update.trim() !== "") {
+          html += `<div>${update}</div>`;
+          hasUpdate = true;
+        }
+      }
+      document.getElementById("update-texts").innerHTML = hasUpdate ? html : 'No updates available.';
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
-        // Settings button reliably binds after DOM is loaded
-        var settingsBtn = document.getElementById('openSettingsBtn');
-        if (settingsBtn) {
-            settingsBtn.onclick = function() {
-                window.location.href = 'settings.html';
-            };
-        }
-
-        // Helper: NY date for API
-        function getNYDate() {
-            const now = new Date();
-            const opts = { timeZone: 'America/New_York', year: 'numeric', month: 'numeric', day: 'numeric' };
-            const parts = new Intl.DateTimeFormat('en-US', opts).formatToParts(now);
-            const year = parts.find(p => p.type === 'year').value;
-            const month = parts.find(p => p.type === 'month').value;
-            const day = parts.find(p => p.type === 'day').value;
-            return { year, month, day };
-        }
-
-        // Live clock
-        function updateClock() {
-            const clock = document.getElementById('clock');
-            if (!clock) return;
-            const now = new Date();
-            let h = now.getHours();
-            const m = String(now.getMinutes()).padStart(2, '0');
-            const s = String(now.getSeconds()).padStart(2, '0');
-            const ampm = h >= 12 ? 'PM' : 'AM';
-            h = h % 12;
-            h = h ? h : 12;
-            clock.textContent = `${h}:${m}:${s} ${ampm}`;
-        }
-        updateClock();
-        setInterval(updateClock, 1000);
-
-        // Dates
-        function renderDates() {
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('greg-date').textContent = now.toLocaleDateString(undefined, options);
-
-            // NY date for Hebrew date
-            const ny = getNYDate();
-            fetch(`https://www.hebcal.com/converter?cfg=json&gy=${ny.year}&gm=${ny.month}&gd=${ny.day}&g2h=1`)
-                .then(r => r.json())
-                .then(data => {
-                    const hdate = `${data.hebrew} (${data.hm} ${data.hy})`;
-                    document.getElementById('heb-date').textContent = hdate;
-                })
-                .catch(() => {
-                    document.getElementById('heb-date').textContent = "Error loading Hebrew date.";
-                });
-        }
-
-        // Parsha
-        async function fetchParsha() {
-            const today = new Date();
-            const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}`;
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                const parshaItem = data.items.find(item => item.category === "parashat");
-                document.getElementById("parsha-name").textContent = parshaItem ? `Parsha: ${parshaItem.title}` : "Parsha: N/A";
-            } catch (error) {
-                document.getElementById("parsha-name").textContent = "Parsha: Error loading.";
-            }
-        }
-
-        // Shabbat times
-        async function fetchShabbatTimes() {
-            const today = new Date();
-            const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}`;
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                const now = new Date();
-
-                // Candle lighting
-                const allCandleLightings = data.items.filter(item => item.category === "candle-lighting");
-                let candleLighting = null;
-                for (const item of allCandleLightings) {
-                    const eventDate = new Date(item.date);
-                    if (eventDate.getTime() >= now.getTime() - 5*60*60*1000) {
-                        candleLighting = item;
-                        break;
-                    }
-                }
-                if (candleLighting) {
-                    const dt = new Date(candleLighting.date);
-                    document.getElementById("candle-lighting").textContent =
-                        `Candle Lighting: ${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} on ${dt.toLocaleDateString()}`;
-                } else {
-                    document.getElementById("candle-lighting").textContent = "Candle Lighting: N/A";
-                }
-
-                // Havdalah
-                const havdalah = data.items.find(item =>
-                    item.category === "havdalah" && new Date(item.date) >= now
-                );
-                if (havdalah) {
-                    const dt = new Date(havdalah.date);
-                    document.getElementById("havdalah").textContent =
-                        `Havdalah: ${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} on ${dt.toLocaleDateString()}`;
-                } else {
-                    document.getElementById("havdalah").textContent = "Havdalah: N/A";
-                }
-            } catch (error) {
-                document.getElementById("candle-lighting").textContent = "Candle Lighting: Error";
-                document.getElementById("havdalah").textContent = "Havdalah: Error";
-            }
-        }
-
-        // Daily zmanim
-        async function fetchZmanim() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            const url = `https://www.hebcal.com/zmanim?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&date=${year}-${month}-${day}`;
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                const times = data.times || {};
-                document.getElementById("sunrise").textContent = `Sunrise: ${times.sunrise ? new Date(times.sunrise).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
-                document.getElementById("sunset").textContent = `Sunset: ${times.sunset ? new Date(times.sunset).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
-                document.getElementById("shacharis").textContent = `Shacharis: ${times.alotHaShachar ? new Date(times.alotHaShachar).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
-                document.getElementById("mincha").textContent = `Mincha: ${times.minchaGedola ? new Date(times.minchaGedola).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
-                document.getElementById("maariv").textContent = `Maariv: ${times.tzeit42min ? new Date(times.tzeit42min).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
-            } catch (error) {
-                document.getElementById("sunrise").textContent = "Sunrise: Error";
-                document.getElementById("sunset").textContent = "Sunset: Error";
-                document.getElementById("shacharis").textContent = "Shacharis: Error";
-                document.getElementById("mincha").textContent = "Mincha: Error";
-                document.getElementById("maariv").textContent = "Maariv: Error";
-            }
-        }
-
-        // Office updates (localStorage version)
-        function fetchOfficeUpdates() {
-            const update = localStorage.getItem('officeUpdate') || 'No updates available.';
-            document.getElementById("update-text").textContent = update;
-        }
-
-        // Initial load and intervals
-        renderDates();
-        fetchParsha();
-        fetchShabbatTimes();
-        fetchZmanim();
-        fetchOfficeUpdates();
-
-        setInterval(renderDates, 60 * 60 * 1000);
-        setInterval(fetchParsha, 6 * 60 * 60 * 1000);
-        setInterval(fetchShabbatTimes, 60 * 60 * 1000);
-        setInterval(fetchZmanim, 10 * 60 * 1000);
-        setInterval(fetchOfficeUpdates, 5 * 60 * 1000);
+      applySettings();
+      fetchOfficeUpdates();
     });
-    </script>
+
+    // Optional: Refresh updates if localStorage changes in another tab
+    window.addEventListener('storage', function(e) {
+      if (e.key && e.key.startsWith('officeUpdate')) {
+        fetchOfficeUpdates();
+      }
+      if (['font', 'fontSize', 'textColor', 'bgColor'].includes(e.key)) {
+        applySettings();
+      }
+    });
+  </script>
 </body>
 </html>
