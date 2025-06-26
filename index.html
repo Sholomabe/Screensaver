@@ -4,169 +4,247 @@
   <meta charset="UTF-8">
   <title>Screensaver</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Modern font from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --main-bg: linear-gradient(135deg, #1e2530 0%, #10141a 100%);
+      --glass-bg: rgba(34, 40, 49, 0.64);
+      --glass-blur: blur(12px);
+      --accent: #33d17a;
+      --accent2: #0099ff;
+      --header-text: #fff;
+      --zmanim-header: #4fdaff;
+      --shabbat-header: #ffe082;
+      --panel-radius: 22px;
+      --box-shadow: 0 6px 32px 0 rgba(0,0,0,0.18), 0 1.5px 5px 0 rgba(0,0,0,0.08);
+    }
     body {
-      background: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
+      background: var(--main-bg);
+      color: #e9e9e9;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
       margin: 0;
       padding: 0;
       width: 100vw;
       height: 100vh;
       overflow: hidden;
+      box-sizing: border-box;
     }
     .settings-link {
       position: absolute;
-      top: 20px;
-      right: 32px;
-      color: #bbb;
-      font-size: 1.2em;
-      text-decoration: underline;
+      top: 24px;
+      right: 40px;
+      color: #a9b1bb;
+      font-size: 1.1em;
+      text-decoration: none;
       cursor: pointer;
       z-index: 20;
+      background: var(--glass-bg);
+      padding: 8px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: color 0.15s, background 0.15s;
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--box-shadow);
+      letter-spacing: 0.05em;
     }
+    .settings-link:hover {
+      color: var(--accent);
+      background: rgba(34, 40, 49, 0.80);
+    }
+
     #clock {
       position: absolute;
-      top: 30px;
-      right: 40px;
-      font-size: 2.5vw;
-      font-weight: bold;
-      letter-spacing: 0.03em;
-      text-shadow: 0 1px 8px #222, 0 1px 2px #333;
+      top: 36px;
+      right: 48px;
+      font-size: 2vw;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-shadow: 0 2px 16px rgba(0,0,0,0.2), 0 1px 2px #222;
       z-index: 12;
       text-align: right;
-      background: rgba(30,30,30,0.7);
-      padding: 10px 24px;
-      border-radius: 16px;
-      min-width: 170px;
+      background: var(--glass-bg);
+      padding: 12px 26px;
+      border-radius: 18px;
+      min-width: 160px;
       pointer-events: auto;
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--box-shadow);
     }
     #greg-date, #hebrew-date {
       position: absolute;
-      top: 80px;
-      right: 40px;
-      font-size: 1.1vw;
-      color: #8fffa0;
+      top: 87px;
+      right: 50px;
+      font-size: 1.07vw;
+      color: #b6ffe0;
       text-align: right;
       z-index: 12;
       width: 18vw;
       pointer-events: auto;
+      text-shadow: 0 1px 6px #142;
     }
+
     #center-logo {
       position: absolute;
       left: 50%;
       top: 50%;
-      transform: translate(-50%, -55%);
-      height: 240px; /* double the previous 120px */
-      max-width: 90vw;
+      transform: translate(-50%, -56%);
+      height: 260px;
+      max-width: 96vw;
       object-fit: contain;
-      filter: drop-shadow(0 3px 16px #111);
+      filter: drop-shadow(0 2px 40px #0a0a0a) drop-shadow(0 0px 2px #111);
       z-index: 2;
       pointer-events: none;
+      transition: height 0.25s;
+    }
+
+    /* Glassy panels for zmanim and shabbat */
+    .glass-panel {
+      background: var(--glass-bg);
+      border-radius: var(--panel-radius);
+      box-shadow: var(--box-shadow);
+      padding: 30px 28px 26px 28px;
+      min-width: 240px;
+      max-width: 32vw;
+      min-height: 120px;
+      backdrop-filter: var(--glass-blur);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .panel-header {
+      font-size: 1.25em;
+      font-weight: 600;
+      margin-bottom: 18px;
+      letter-spacing: 0.07em;
+      width: 100%;
+      text-align: left;
+      text-shadow: 0 2px 8px #0007;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
     }
     #zmanim-today {
       position: absolute;
-      left: 32px;
+      left: 38px;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(32,32,32,0.88);
-      padding: 22px 18px 22px 22px;
-      border-radius: 12px;
-      font-size: 1.1vw;
       color: #c2e3ff;
-      max-width: 26vw;
-      min-width: 210px;
-      box-shadow: 0 2px 10px #111;
-      pointer-events: auto;
       z-index: 10;
       text-align: left;
-      line-height: 2.1;
+      line-height: 2.15;
+    }
+    #zmanim-today .panel-header {
+      color: var(--zmanim-header);
+      border-bottom: 2px solid #40e0ff30;
+      margin-bottom: 14px;
+      padding-bottom: 4px;
+    }
+    #zmanim-list {
+      width: 100%;
+      font-size: 1.04em;
+      word-break: break-all;
     }
     #shabbat-parsha-container {
       position: absolute;
-      right: 32px;
+      right: 38px;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(32,32,32,0.88);
-      padding: 22px 22px 22px 18px;
-      border-radius: 12px;
-      font-size: 1.1vw;
       color: #ffe082;
-      max-width: 26vw;
-      min-width: 210px;
-      box-shadow: 0 2px 10px #111;
-      pointer-events: auto;
       z-index: 10;
       text-align: right;
       line-height: 2.1;
     }
+    #shabbat-parsha-container .panel-header {
+      color: var(--shabbat-header);
+      border-bottom: 2px solid #ffe08240;
+      margin-bottom: 14px;
+      padding-bottom: 4px;
+      text-align: right;
+    }
     #hebrew-parsha {
-      font-size: 1.4vw;
-      color: #ffe082;
-      font-weight: bold;
-      margin-bottom: 0.5vw;
+      font-size: 1.15em;
+      color: #fff1c1;
+      font-weight: 600;
+      margin-bottom: 0.4vw;
+      letter-spacing: 0.04em;
     }
     #shabbat-times {
       color: #8fffa0;
-      font-size: 1vw;
+      font-size: 1.06em;
+      font-weight: 400;
+      margin-top: 0.16em;
+      letter-spacing: 0.02em;
     }
     #update-texts {
       position: absolute;
-      left: 32px;
-      bottom: 32px;
-      background: rgba(32,32,32,0.88);
-      padding: 18px 24px;
-      border-radius: 12px;
-      font-size: 1.1em;
+      left: 36px;
+      bottom: 36px;
+      background: var(--glass-bg);
+      padding: 18px 26px;
+      border-radius: 14px;
+      font-size: 1.12em;
       color: #8fffa0;
       max-width: 32vw;
       z-index: 11;
       min-width: 220px;
-      box-shadow: 0 2px 10px #111;
+      box-shadow: var(--box-shadow);
       pointer-events: auto;
+      backdrop-filter: var(--glass-blur);
+      letter-spacing: 0.04em;
+      border: 1.5px solid #40e0ff12;
     }
     @media (max-width: 900px) {
-      #center-logo { height: 120px; }
+      #center-logo { height: 140px; }
       #clock { font-size: 4vw; min-width: 110px; padding: 6px 10px;}
       #greg-date, #hebrew-date { font-size: 2vw; width: 40vw; }
-      #zmanim-today, #shabbat-parsha-container { font-size: 2vw; min-width: 100px; max-width: 92vw; padding: 15px 10px;}
+      .glass-panel { min-width: 120px; padding: 14px 8px 14px 10px; }
     }
     @media (max-width: 600px) {
-      #center-logo { height: 64px; }
+      #center-logo { height: 70px; }
       #clock { font-size: 7vw; }
       #greg-date, #hebrew-date { font-size: 3vw; }
-      #zmanim-today, #shabbat-parsha-container { font-size: 3vw; min-width: 60px; padding: 7px 5px;}
-      #update-texts { font-size: 1em; left: 4vw; bottom: 10vw; max-width: 90vw; min-width: 120px; }
+      .glass-panel { font-size: 3vw; min-width: 60px; padding: 7px 5px;}
+      #update-texts { font-size: 1em; left: 4vw; bottom: 10vw; max-width: 90vw; min-width: 110px; }
       .settings-link { font-size: 1em; right: 10px;}
     }
-    /* Music Player Styles */
+    /* Music Player Styles (unchanged from before) */
     #music-float {
       position: fixed;
       bottom: 24px;
       right: 24px;
       width: 320px;
-      background: #181818;
+      background: var(--glass-bg);
       color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.5);
+      border-radius: 16px;
+      box-shadow: var(--box-shadow);
       padding: 12px 12px 8px 12px;
       z-index: 9999;
-      font-family: Arial, sans-serif;
+      font-family: 'Inter', Arial, sans-serif;
       pointer-events: auto;
+      backdrop-filter: var(--glass-blur);
     }
     #music-header {
       font-weight: bold;
       margin-bottom: 10px;
       cursor: move;
       user-select: none;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      font-size: 1.1em;
     }
     #music-search {
       width: 65%;
-      padding: 4px 8px;
-      border-radius: 6px;
+      padding: 5px 8px;
+      border-radius: 7px;
       border: none;
       margin-right: 6px;
       font-size: 1em;
+      background: #222e;
+      color: #fff;
+      outline: none;
+    }
+    #music-search:focus {
+      border: 1.5px solid var(--accent2);
     }
     #music-results {
       max-height: 120px;
@@ -174,12 +252,14 @@
       margin: 8px 0;
     }
     .music-result {
-      padding: 4px 0;
+      padding: 4px 0 4px 4px;
       cursor: pointer;
       border-bottom: 1px solid #222;
+      border-radius: 5px;
+      transition: background 0.14s;
     }
     .music-result:hover {
-      background: #333;
+      background: #1c2a33;
     }
     #close-music {
       position: absolute;
@@ -195,13 +275,15 @@
       font-size: 1.1em;
       line-height: 1;
       z-index: 10000;
+      box-shadow: 0 2px 7px #111b;
+      transition: background 0.13s;
     }
     #close-music:hover { background: #f55; color: #fff; }
   </style>
 </head>
 <body>
   <!-- Settings link -->
-  <span class="settings-link" onclick="window.location.href='settings.html'">Settings</span>
+  <a class="settings-link" href="settings.html">Settings</a>
 
   <!-- Clock, Date, Hebrew Date in top right -->
   <div id="clock"></div>
@@ -212,10 +294,14 @@
   <img id="center-logo" src="DIESEL_FINAL_LOGO_3_COLOR-1-removebg-preview (1).png" alt="Logo" />
 
   <!-- Daily zmanim (left) -->
-  <div id="zmanim-today"></div>
+  <div id="zmanim-today" class="glass-panel">
+    <div class="panel-header">Daily Zmanim</div>
+    <div id="zmanim-list"></div>
+  </div>
 
   <!-- Parsha and Shabbat times (right) -->
-  <div id="shabbat-parsha-container">
+  <div id="shabbat-parsha-container" class="glass-panel">
+    <div class="panel-header">Shabbat & Parsha</div>
     <div id="hebrew-parsha"></div>
     <div id="shabbat-times"></div>
   </div>
@@ -260,10 +346,10 @@
 
     // APPEARANCE AND OFFICE UPDATES
     function applySettings() {
-      document.body.style.fontFamily = localStorage.getItem('font') || "Arial, sans-serif";
+      document.body.style.fontFamily = localStorage.getItem('font') || "'Inter', 'Segoe UI', Arial, sans-serif";
       document.body.style.fontSize = localStorage.getItem('fontSize') || "20px";
       document.body.style.color = localStorage.getItem('textColor') || "#ffffff";
-      document.body.style.background = localStorage.getItem('bgColor') || "#000000";
+      document.body.style.background = localStorage.getItem('bgColor') || "var(--main-bg)";
     }
     function fetchOfficeUpdates() {
       let hasUpdate = false;
@@ -341,7 +427,7 @@
             if(z.times.sunset) zm.push("שקיעה (Sunset): " + to12HourStr(z.times.sunset));
             if(z.times.tzeit_t3_stars) zm.push("צאת הכוכבים (Night): " + to12HourStr(z.times.tzeit_t3_stars));
           }
-          document.getElementById('zmanim-today').innerHTML = zm.join("<br>");
+          document.getElementById('zmanim-list').innerHTML = zm.join("<br>");
         });
     }
     updateHebcal();
