@@ -127,17 +127,17 @@
       background: var(--glass-bg);
       border-radius: var(--panel-radius);
       box-shadow: var(--box-shadow);
-      padding: 31px 35px 27.5px 35px;   /* was 28px 32px 25px 32px */
-      min-width: 248px;                 /* was 225px */
-      max-width: 30.8vw;                /* was 28vw */
-      min-height: 143px;                /* was 130px */
+      padding: 31px 35px 27.5px 35px;
+      min-width: 248px;
+      max-width: 30.8vw;
+      min-height: 143px;
       backdrop-filter: var(--glass-blur);
       display: flex;
       flex-direction: column;
       align-items: flex-start;
     }
     .panel-header {
-      font-size: 1.30em;                /* was 1.18em */
+      font-size: 1.30em;
       font-weight: 700;
       margin-bottom: 13px;
       letter-spacing: 0.09em;
@@ -156,7 +156,7 @@
       z-index: 10;
       text-align: left;
       line-height: 1.7;
-      font-size: 1.20em;                /* was 1.09em */
+      font-size: 1.20em;
     }
     #zmanim-today .panel-header {
       color: var(--zmanim-header);
@@ -167,7 +167,7 @@
     }
     #zmanim-list {
       width: 100%;
-      font-size: 1.18em;                /* was 1.07em */
+      font-size: 1.18em;
       word-break: break-all;
       font-weight: 600;
     }
@@ -180,7 +180,7 @@
       z-index: 10;
       text-align: right;
       line-height: 1.7;
-      font-size: 1.20em;                /* was 1.09em */
+      font-size: 1.20em;
     }
     #shabbat-parsha-container .panel-header {
       color: var(--shabbat-header);
@@ -191,7 +191,7 @@
       font-size: 1.30em;
     }
     #hebrew-parsha {
-      font-size: 1.19em;                /* was 1.08em */
+      font-size: 1.19em;
       color: #fff1c1;
       font-weight: 700;
       margin-bottom: 0.4vw;
@@ -199,7 +199,7 @@
     }
     #shabbat-times {
       color: #8fffa0;
-      font-size: 1.18em;                /* was 1.07em */
+      font-size: 1.18em;
       font-weight: 600;
       margin-top: 0.13em;
       letter-spacing: 0.01em;
@@ -234,12 +234,33 @@
       letter-spacing: 0.07em;
       text-shadow: 0 2px 8px #0007;
     }
+    /* Miami Weather styles */
+    #weather-container {
+      position: absolute;
+      top: 38px;
+      right: 48px;
+      background: var(--glass-bg);
+      padding: 14px 28px;
+      border-radius: 18px;
+      box-shadow: var(--box-shadow);
+      z-index: 15;
+      font-size: 1.4vw;
+      font-weight: 600;
+      text-align: right;
+      color: #ffe082;
+      display: flex;
+      gap: 0.9em;
+      align-items: center;
+      pointer-events: auto;
+      backdrop-filter: var(--glass-blur);
+    }
     @media (max-width: 900px) {
       #center-logo { height: 140px; }
       #clock { font-size: 4vw; min-width: 110px; padding: 6px 10px;}
       #date-container { font-size: 1.3vw; min-width: 160px; padding: 12px 8px; }
       .glass-panel { min-width: 130px; padding: 16px 9px 16px 11px; }
       #update-texts { font-size: 1em; min-width: 140px; padding: 12px 10px;}
+      #weather-container { font-size: 2.1vw; padding: 10px 13px;}
     }
     @media (max-width: 600px) {
       #center-logo { height: 70px; }
@@ -249,6 +270,7 @@
       #update-texts { font-size: 1em; left: 4vw; bottom: 10vw; max-width: 90vw; min-width: 110px; }
       .settings-link { width: 36px; height: 36px; right: 12px; bottom: 12px;}
       .settings-link svg { width: 19px; height: 19px;}
+      #weather-container { font-size: 3vw; padding: 8px 9px;}
     }
     /* Music Player Styles (unchanged) */
     #music-float {
@@ -336,6 +358,11 @@
     <div id="greg-date"></div>
     <div id="hebrew-date"></div>
   </div>
+  <!-- Live weather top right -->
+  <div id="weather-container">
+    <span id="weather-temp">--°</span>
+    <span id="weather-desc"></span>
+  </div>
   <!-- Center Logo -->
   <img id="center-logo" src="DIESEL_FINAL_LOGO_3_COLOR-1-removebg-preview (1).png" alt="Logo" />
   <!-- Daily zmanim (left) -->
@@ -366,6 +393,37 @@
     </div>
   </div>
   <script>
+    // Live Miami Weather
+    function fetchWeatherMiami() {
+      // Miami coordinates
+      const lat = 25.7617, lon = -80.1918;
+      // Open-Meteo free API
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,precipitation,weathercode&timezone=auto`)
+        .then(r => r.json())
+        .then(data => {
+          if (!data.current) return;
+          const temp = Math.round(data.current.temperature_2m);
+          const precip = data.current.precipitation;
+          const code = data.current.weathercode;
+          // Weather summary
+          let desc = '';
+          if (code === 0) desc = 'Clear';
+          else if (code === 1 || code === 2) desc = 'Partly Cloudy';
+          else if (code === 3) desc = 'Cloudy';
+          else if (code >= 51 && code <= 67) desc = 'Drizzle';
+          else if (code >= 71 && code <= 77) desc = 'Snow';
+          else if (code >= 80 && code <= 82) desc = 'Rain Showers';
+          else if (code >= 95) desc = 'Thunderstorm';
+          else if (precip > 0.1) desc = 'Raining';
+          else desc = 'Unknown';
+          document.getElementById('weather-temp').textContent = `${temp}°`;
+          document.getElementById('weather-desc').textContent = desc;
+        });
+    }
+    // Update on load and every 15 mins
+    fetchWeatherMiami();
+    setInterval(fetchWeatherMiami, 900000);
+
     // CLOCK (12-hour format)
     function to12Hour(h, m, s = null) {
       let hour = h % 12 || 12;
