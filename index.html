@@ -322,8 +322,10 @@
             }
 
             // Office updates (optional)
-            async function fetchOfficeUpdates() {
-                try {
+            function fetchOfficeUpdates() {
+    const update = localStorage.getItem('officeUpdate') || 'No updates available.';
+    document.getElementById("update-text").textContent = update;
+}
                     const response = await fetch("updates.json");
                     const data = await response.json();
                     document.getElementById("update-text").textContent = data.text || "No updates available.";
