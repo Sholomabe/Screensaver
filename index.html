@@ -67,7 +67,7 @@
             max-width: 1500px;
             width: 110%;
             height: auto;
-            margin: 50px 0 40px 0;
+            margin: 50px 0 30px 0;
             display: block;
         }
         .section-title {
@@ -87,14 +87,6 @@
             font-size: 1.35em;
             background: rgba(255,255,255,0.07);
             border-top: 1px solid #444;
-        }
-        .office-updates img {
-            max-width: 520px;
-            max-height: 420px;
-            margin-top: 18px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
         }
         #openSettingsBtn {
             position: fixed;
@@ -181,166 +173,166 @@
     <div class="office-updates">
         <div class="section-title">Office Updates</div>
         <div id="update-text">No updates available.</div>
-        <img id="update-image" style="display:none;" alt="Office Update Image">
     </div>
     <button id="openSettingsBtn" title="Settings">&#9881;</button>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // ---- NEW YORK TIMEZONE HELPER FUNCTION ----
-            function getNYDate() {
-                const now = new Date();
-                const opts = { timeZone: 'America/New_York', year: 'numeric', month: 'numeric', day: 'numeric' };
-                const parts = new Intl.DateTimeFormat('en-US', opts).formatToParts(now);
-                const year = parts.find(p => p.type === 'year').value;
-                const month = parts.find(p => p.type === 'month').value;
-                const day = parts.find(p => p.type === 'day').value;
-                return { year, month, day };
-            }
-
-            // Live clock
-            function updateClock() {
-                const clock = document.getElementById('clock');
-                if (!clock) return;
-                const now = new Date();
-                let h = now.getHours();
-                const m = String(now.getMinutes()).padStart(2, '0');
-                const s = String(now.getSeconds()).padStart(2, '0');
-                const ampm = h >= 12 ? 'PM' : 'AM';
-                h = h % 12;
-                h = h ? h : 12;
-                clock.textContent = `${h}:${m}:${s} ${ampm}`;
-            }
-            updateClock();
-            setInterval(updateClock, 1000);
-
-            // Settings button
-            document.getElementById('openSettingsBtn').onclick = function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        // Settings button reliably binds after DOM is loaded
+        var settingsBtn = document.getElementById('openSettingsBtn');
+        if (settingsBtn) {
+            settingsBtn.onclick = function() {
                 window.location.href = 'settings.html';
             };
+        }
 
-            // Dates
-            function renderDates() {
+        // Helper: NY date for API
+        function getNYDate() {
+            const now = new Date();
+            const opts = { timeZone: 'America/New_York', year: 'numeric', month: 'numeric', day: 'numeric' };
+            const parts = new Intl.DateTimeFormat('en-US', opts).formatToParts(now);
+            const year = parts.find(p => p.type === 'year').value;
+            const month = parts.find(p => p.type === 'month').value;
+            const day = parts.find(p => p.type === 'day').value;
+            return { year, month, day };
+        }
+
+        // Live clock
+        function updateClock() {
+            const clock = document.getElementById('clock');
+            if (!clock) return;
+            const now = new Date();
+            let h = now.getHours();
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            h = h ? h : 12;
+            clock.textContent = `${h}:${m}:${s} ${ampm}`;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // Dates
+        function renderDates() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('greg-date').textContent = now.toLocaleDateString(undefined, options);
+
+            // NY date for Hebrew date
+            const ny = getNYDate();
+            fetch(`https://www.hebcal.com/converter?cfg=json&gy=${ny.year}&gm=${ny.month}&gd=${ny.day}&g2h=1`)
+                .then(r => r.json())
+                .then(data => {
+                    const hdate = `${data.hebrew} (${data.hm} ${data.hy})`;
+                    document.getElementById('heb-date').textContent = hdate;
+                })
+                .catch(() => {
+                    document.getElementById('heb-date').textContent = "Error loading Hebrew date.";
+                });
+        }
+
+        // Parsha
+        async function fetchParsha() {
+            const today = new Date();
+            const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const parshaItem = data.items.find(item => item.category === "parashat");
+                document.getElementById("parsha-name").textContent = parshaItem ? `Parsha: ${parshaItem.title}` : "Parsha: N/A";
+            } catch (error) {
+                document.getElementById("parsha-name").textContent = "Parsha: Error loading.";
+            }
+        }
+
+        // Shabbat times
+        async function fetchShabbatTimes() {
+            const today = new Date();
+            const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
                 const now = new Date();
-                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                document.getElementById('greg-date').textContent = now.toLocaleDateString(undefined, options);
 
-                // ---- USE NY DATE FOR HEBREW DATE ----
-                const ny = getNYDate();
-                fetch(`https://www.hebcal.com/converter?cfg=json&gy=${ny.year}&gm=${ny.month}&gd=${ny.day}&g2h=1`)
-                    .then(r => r.json())
-                    .then(data => {
-                        const hdate = `${data.hebrew} (${data.hm} ${data.hy})`;
-                        document.getElementById('heb-date').textContent = hdate;
-                    })
-                    .catch(() => {
-                        document.getElementById('heb-date').textContent = "Error loading Hebrew date.";
-                    });
-            }
-
-            // Parsha
-            async function fetchParsha() {
-                const today = new Date();
-                const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}`;
-                try {
-                    const response = await fetch(url);
-                    const data = await response.json();
-                    const parshaItem = data.items.find(item => item.category === "parashat");
-                    document.getElementById("parsha-name").textContent = parshaItem ? `Parsha: ${parshaItem.title}` : "Parsha: N/A";
-                } catch (error) {
-                    document.getElementById("parsha-name").textContent = "Parsha: Error loading.";
-                }
-            }
-
-            // Shabbat times (candle lighting, havdalah)
-            async function fetchShabbatTimes() {
-                const today = new Date();
-                const url = `https://www.hebcal.com/shabbat?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}&M=on&b=40`;
-                try {
-                    const response = await fetch(url);
-                    const data = await response.json();
-                    const now = new Date();
-
-                    // Candle lighting: find the next one today or in future (also if already this Friday evening)
-                    const allCandleLightings = data.items.filter(item => item.category === "candle-lighting");
-                    let candleLighting = null;
-                    for (const item of allCandleLightings) {
-                        const eventDate = new Date(item.date);
-                        // Show if in future, or if occurred within last 5 hours (to handle Friday nights after candle lighting)
-                        if (eventDate.getTime() >= now.getTime() - 5*60*60*1000) {
-                            candleLighting = item;
-                            break;
-                        }
+                // Candle lighting
+                const allCandleLightings = data.items.filter(item => item.category === "candle-lighting");
+                let candleLighting = null;
+                for (const item of allCandleLightings) {
+                    const eventDate = new Date(item.date);
+                    if (eventDate.getTime() >= now.getTime() - 5*60*60*1000) {
+                        candleLighting = item;
+                        break;
                     }
-                    if (candleLighting) {
-                        const dt = new Date(candleLighting.date);
-                        document.getElementById("candle-lighting").textContent =
-                            `Candle Lighting: ${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} on ${dt.toLocaleDateString()}`;
-                    } else {
-                        document.getElementById("candle-lighting").textContent = "Candle Lighting: N/A";
-                    }
-
-                    // Havdalah: next future havdalah event
-                    const havdalah = data.items.find(item =>
-                        item.category === "havdalah" && new Date(item.date) >= now
-                    );
-                    if (havdalah) {
-                        const dt = new Date(havdalah.date);
-                        document.getElementById("havdalah").textContent =
-                            `Havdalah: ${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} on ${dt.toLocaleDateString()}`;
-                    } else {
-                        document.getElementById("havdalah").textContent = "Havdalah: N/A";
-                    }
-                } catch (error) {
-                    document.getElementById("candle-lighting").textContent = "Candle Lighting: Error";
-                    document.getElementById("havdalah").textContent = "Havdalah: Error";
                 }
-            }
-
-            // Daily zmanim
-            async function fetchZmanim() {
-                const today = new Date();
-                const year = today.getFullYear();
-                const month = String(today.getMonth() + 1).padStart(2, '0');
-                const day = String(today.getDate()).padStart(2, '0');
-                const url = `https://www.hebcal.com/zmanim?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&date=${year}-${month}-${day}`;
-                try {
-                    const response = await fetch(url);
-                    const data = await response.json();
-                    const times = data.times || {};
-                    document.getElementById("sunrise").textContent = `Sunrise: ${times.sunrise ? new Date(times.sunrise).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
-                    document.getElementById("sunset").textContent = `Sunset: ${times.sunset ? new Date(times.sunset).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
-                    document.getElementById("shacharis").textContent = `Shacharis: ${times.alotHaShachar ? new Date(times.alotHaShachar).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
-                    document.getElementById("mincha").textContent = `Mincha: ${times.minchaGedola ? new Date(times.minchaGedola).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
-                    document.getElementById("maariv").textContent = `Maariv: ${times.tzeit42min ? new Date(times.tzeit42min).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
-                } catch (error) {
-                    document.getElementById("sunrise").textContent = "Sunrise: Error";
-                    document.getElementById("sunset").textContent = "Sunset: Error";
-                    document.getElementById("shacharis").textContent = "Shacharis: Error";
-                    document.getElementById("mincha").textContent = "Mincha: Error";
-                    document.getElementById("maariv").textContent = "Maariv: Error";
+                if (candleLighting) {
+                    const dt = new Date(candleLighting.date);
+                    document.getElementById("candle-lighting").textContent =
+                        `Candle Lighting: ${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} on ${dt.toLocaleDateString()}`;
+                } else {
+                    document.getElementById("candle-lighting").textContent = "Candle Lighting: N/A";
                 }
+
+                // Havdalah
+                const havdalah = data.items.find(item =>
+                    item.category === "havdalah" && new Date(item.date) >= now
+                );
+                if (havdalah) {
+                    const dt = new Date(havdalah.date);
+                    document.getElementById("havdalah").textContent =
+                        `Havdalah: ${dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} on ${dt.toLocaleDateString()}`;
+                } else {
+                    document.getElementById("havdalah").textContent = "Havdalah: N/A";
+                }
+            } catch (error) {
+                document.getElementById("candle-lighting").textContent = "Candle Lighting: Error";
+                document.getElementById("havdalah").textContent = "Havdalah: Error";
             }
+        }
 
-            // Office updates (optional)
-            function fetchOfficeUpdates() {
-    const update = localStorage.getItem('officeUpdate') || 'No updates available.';
-    document.getElementById("update-text").textContent = update;
-}
+        // Daily zmanim
+        async function fetchZmanim() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const url = `https://www.hebcal.com/zmanim?cfg=json&latitude=25.934242&longitude=-80.164398&tzid=America/New_York&date=${year}-${month}-${day}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const times = data.times || {};
+                document.getElementById("sunrise").textContent = `Sunrise: ${times.sunrise ? new Date(times.sunrise).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
+                document.getElementById("sunset").textContent = `Sunset: ${times.sunset ? new Date(times.sunset).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
+                document.getElementById("shacharis").textContent = `Shacharis: ${times.alotHaShachar ? new Date(times.alotHaShachar).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
+                document.getElementById("mincha").textContent = `Mincha: ${times.minchaGedola ? new Date(times.minchaGedola).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
+                document.getElementById("maariv").textContent = `Maariv: ${times.tzeit42min ? new Date(times.tzeit42min).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : "N/A"}`;
+            } catch (error) {
+                document.getElementById("sunrise").textContent = "Sunrise: Error";
+                document.getElementById("sunset").textContent = "Sunset: Error";
+                document.getElementById("shacharis").textContent = "Shacharis: Error";
+                document.getElementById("mincha").textContent = "Mincha: Error";
+                document.getElementById("maariv").textContent = "Maariv: Error";
             }
+        }
 
-            // Initial load and intervals
-            renderDates();
-            fetchParsha();
-            fetchShabbatTimes();
-            fetchZmanim();
-            fetchOfficeUpdates();
+        // Office updates (localStorage version)
+        function fetchOfficeUpdates() {
+            const update = localStorage.getItem('officeUpdate') || 'No updates available.';
+            document.getElementById("update-text").textContent = update;
+        }
 
-            setInterval(renderDates, 60 * 60 * 1000);
-            setInterval(fetchParsha, 6 * 60 * 60 * 1000);
-            setInterval(fetchShabbatTimes, 60 * 60 * 1000);
-            setInterval(fetchZmanim, 10 * 60 * 1000);
-            setInterval(fetchOfficeUpdates, 5 * 60 * 1000);
-        });
+        // Initial load and intervals
+        renderDates();
+        fetchParsha();
+        fetchShabbatTimes();
+        fetchZmanim();
+        fetchOfficeUpdates();
+
+        setInterval(renderDates, 60 * 60 * 1000);
+        setInterval(fetchParsha, 6 * 60 * 60 * 1000);
+        setInterval(fetchShabbatTimes, 60 * 60 * 1000);
+        setInterval(fetchZmanim, 10 * 60 * 1000);
+        setInterval(fetchOfficeUpdates, 5 * 60 * 1000);
+    });
     </script>
 </body>
 </html>
