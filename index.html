@@ -186,6 +186,17 @@
     <button id="openSettingsBtn" title="Settings">&#9881;</button>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // ---- NEW YORK TIMEZONE HELPER FUNCTION ----
+            function getNYDate() {
+                const now = new Date();
+                const opts = { timeZone: 'America/New_York', year: 'numeric', month: 'numeric', day: 'numeric' };
+                const parts = new Intl.DateTimeFormat('en-US', opts).formatToParts(now);
+                const year = parts.find(p => p.type === 'year').value;
+                const month = parts.find(p => p.type === 'month').value;
+                const day = parts.find(p => p.type === 'day').value;
+                return { year, month, day };
+            }
+
             // Live clock
             function updateClock() {
                 const clock = document.getElementById('clock');
@@ -209,11 +220,13 @@
 
             // Dates
             function renderDates() {
-                const today = new Date();
+                const now = new Date();
                 const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                document.getElementById('greg-date').textContent = today.toLocaleDateString(undefined, options);
+                document.getElementById('greg-date').textContent = now.toLocaleDateString(undefined, options);
 
-                fetch(`https://www.hebcal.com/converter?cfg=json&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}&g2h=1`)
+                // ---- USE NY DATE FOR HEBREW DATE ----
+                const ny = getNYDate();
+                fetch(`https://www.hebcal.com/converter?cfg=json&gy=${ny.year}&gm=${ny.month}&gd=${ny.day}&g2h=1`)
                     .then(r => r.json())
                     .then(data => {
                         const hdate = `${data.hebrew} (${data.hm} ${data.hy})`;
