@@ -5,7 +5,7 @@
   <title>Screensaver</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; }
+    body { background: #000; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden;}
     .settings-link {
       position: absolute;
       top: 20px;
@@ -14,7 +14,7 @@
       font-size: 1.2em;
       text-decoration: underline;
       cursor: pointer;
-      z-index: 10;
+      z-index: 20;
     }
     #main-screensaver {
       width: 100vw;
@@ -29,20 +29,43 @@
       top: 0; left: 0;
       z-index: 1;
     }
+    #center-logo {
+      display: block;
+      margin: 0 auto 2vw auto;
+      height: 120px;
+      max-width: 60vw;
+      object-fit: contain;
+      filter: drop-shadow(0 3px 16px #111);
+      pointer-events: none;
+    }
     #clock {
       font-size: 6vw;
       letter-spacing: 0.06em;
-      margin-top: 5vh;
       font-weight: bold;
       text-shadow: 0 3px 24px #222, 0 1px 2px #333;
+      margin-top: 2vw;
+      margin-bottom: 1vw;
     }
-    #hebrew-date, #hebrew-parsha, #hebrew-candle {
+    #greg-date {
       font-size: 2vw;
-      margin-top: 1vw;
+      margin-bottom: 1vw;
       color: #8fffa0;
-      text-shadow: 0 2px 12px #111;
     }
-    #hebrew-parsha, #hebrew-candle { font-size: 1.4vw; }
+    #hebrew-date, #hebrew-parsha {
+      font-size: 1.7vw;
+      margin-bottom: 0.5vw;
+      color: #ffe082;
+      text-shadow: 0 2px 12px #111;
+      font-weight: bold;
+    }
+    #shabbat-times, #zmanim-today {
+      font-size: 1.1vw;
+      margin-bottom: 0.3vw;
+      color: #8fffa0;
+      text-shadow: 0 1px 4px #111;
+      font-weight: 400;
+    }
+    #zmanim-today { color: #c2e3ff; }
     #update-texts {
       position: absolute;
       left: 32px;
@@ -50,7 +73,7 @@
       background: rgba(32,32,32,0.88);
       padding: 18px 24px;
       border-radius: 12px;
-      font-size: 1.3em;
+      font-size: 1.1em;
       color: #8fffa0;
       max-width: 32vw;
       z-index: 11;
@@ -59,8 +82,10 @@
       pointer-events: auto;
     }
     @media (max-width: 600px) {
-      #clock { font-size: 10vw; }
-      #hebrew-date, #hebrew-parsha, #hebrew-candle { font-size: 3vw; }
+      #center-logo { height: 64px; }
+      #clock { font-size: 12vw; }
+      #greg-date, #hebrew-date, #hebrew-parsha { font-size: 4vw; }
+      #shabbat-times, #zmanim-today { font-size: 3vw; }
       #update-texts { font-size: 1em; left: 4vw; bottom: 10vw; max-width: 90vw; min-width: 120px; }
       .settings-link { font-size: 1em; right: 10px;}
     }
@@ -127,18 +152,22 @@
 <body>
   <!-- Settings link -->
   <span class="settings-link" onclick="window.location.href='settings.html'">Settings</span>
-  
-  <!-- Main screensaver (clock and Hebcal info) -->
+
+  <!-- Main screensaver area -->
   <div id="main-screensaver">
+    <!-- Logo in the center (replace src with your logo!) -->
+    <img id="center-logo" src="DIESEL_FINAL_LOGO_3_COLOR-1-removebg-preview (1).png" />
     <div id="clock"></div>
+    <div id="greg-date"></div>
     <div id="hebrew-date"></div>
     <div id="hebrew-parsha"></div>
-    <div id="hebrew-candle"></div>
+    <div id="shabbat-times"></div>
+    <div id="zmanim-today"></div>
   </div>
 
   <!-- Office updates (lower left corner) -->
   <div id="update-texts">No updates available.</div>
-  
+
   <!-- Floating Music Player Window (bottom right) -->
   <div id="music-float">
     <button id="close-music" onclick="document.getElementById('music-float').style.display='none'">×</button>
@@ -150,20 +179,24 @@
       <iframe id="music-player" width="280" height="160" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
   </div>
-  
+
   <script>
-    // --- CLOCK ---
+    // CLOCK
     function updateClock() {
       var now = new Date();
       var h = String(now.getHours()).padStart(2,'0');
       var m = String(now.getMinutes()).padStart(2,'0');
       var s = String(now.getSeconds()).padStart(2,'0');
       document.getElementById('clock').textContent = h + ':' + m + ':' + s;
+
+      // Gregorian date
+      var opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('greg-date').textContent = now.toLocaleDateString(undefined, opts);
     }
     setInterval(updateClock, 1000);
     updateClock();
 
-    // --- APPEARANCE AND OFFICE UPDATES ---
+    // APPEARANCE AND OFFICE UPDATES
     function applySettings() {
       document.body.style.fontFamily = localStorage.getItem('font') || "Arial, sans-serif";
       document.body.style.fontSize = localStorage.getItem('fontSize') || "20px";
@@ -191,38 +224,59 @@
       if (['font', 'fontSize', 'textColor', 'bgColor'].includes(e.key)) applySettings();
     });
 
-    // --- HEBREW DATE AND PARSHA ---
+    // HEBREW DATE, PARSHA, SHABBAT TIMES, ZMANIM
+    // Set to your location for accurate zmanim/shabbat times (default: NYC, geonameid 5128581)
+    const geonameId = 5128581;
     function updateHebcal() {
       const today = new Date();
-      // Get ISO date in yyyy-mm-dd
       const iso = today.toISOString().slice(0,10);
-      // Use Hebcal's API (https://www.hebcal.com/home/219/hebrew-date-rest-api)
-      // Example: https://www.hebcal.com/converter?cfg=json&gy=2024&gm=6&gd=26&g2h=1
+
+      // Hebrew date and parsha
       fetch(`https://www.hebcal.com/converter?cfg=json&gy=${today.getFullYear()}&gm=${today.getMonth()+1}&gd=${today.getDate()}&g2h=1`)
         .then(r=>r.json())
         .then(data=>{
           document.getElementById('hebrew-date').textContent = data.hebrew || "";
         });
-      // Get this week's parsha and candle lighting info
-      fetch(`https://www.hebcal.com/shabbat?cfg=json&geonameid=5128581&start=${iso}&end=${iso}`)
+
+      fetch(`https://www.hebcal.com/shabbat?cfg=json&geonameid=${geonameId}&start=${iso}&end=${iso}`)
         .then(r=>r.json())
         .then(data=>{
-          let parsha = "", candle = "";
+          let parsha = "", shabbat = "";
           if (data.items) {
             for (const item of data.items) {
               if (item.category === "parashat") parsha = "Parsha: " + item.hebrew;
-              if (item.category === "candles") candle = item.hebrew + (item.title ? " ("+item.title+")" : "");
+              if (item.category === "candles") shabbat = "Candle lighting: " + item.title.replace("Candle lighting: ","") + " (" + item.date.substr(11,5) + " local)";
+              if (item.category === "havdalah") shabbat += "<br>Havdalah: " + item.title.replace("Havdalah: ","") + " (" + item.date.substr(11,5) + " local)";
             }
           }
           document.getElementById('hebrew-parsha').textContent = parsha;
-          document.getElementById('hebrew-candle').textContent = candle;
+          document.getElementById('shabbat-times').innerHTML = shabbat;
+        });
+
+      // Zmanim/times for today
+      fetch(`https://www.hebcal.com/zmanim?cfg=json&geonameid=${geonameId}&date=${iso}`)
+        .then(r=>r.json())
+        .then(z=>{
+          let zm = [];
+          if(z.times) {
+            if(z.times.alot_hashachar) zm.push("עלות השחר (Dawn): " + z.times.alot_hashachar.substr(11,5));
+            if(z.times.sunrise) zm.push("הנץ החמה (Sunrise): " + z.times.sunrise.substr(11,5));
+            if(z.times.sof_zman_shema) zm.push("סוף זמן ק\"ש: " + z.times.sof_zman_shema.substr(11,5));
+            if(z.times.sof_zman_tefila) zm.push("סוף זמן תפילה: " + z.times.sof_zman_tefila.substr(11,5));
+            if(z.times.chatzot) zm.push("חצות היום (Midday): " + z.times.chatzot.substr(11,5));
+            if(z.times.mincha_gedola) zm.push("מנחה גדולה: " + z.times.mincha_gedola.substr(11,5));
+            if(z.times.mincha_ketana) zm.push("מנחה קטנה: " + z.times.mincha_ketana.substr(11,5));
+            if(z.times.plag_hamincha) zm.push("פלג המנחה: " + z.times.plag_hamincha.substr(11,5));
+            if(z.times.sunset) zm.push("שקיעה (Sunset): " + z.times.sunset.substr(11,5));
+            if(z.times.tzeit_t3_stars) zm.push("צאת הכוכבים (Night): " + z.times.tzeit_t3_stars.substr(11,5));
+          }
+          document.getElementById('zmanim-today').innerHTML = zm.join(" &bull; ");
         });
     }
     updateHebcal();
-    // Update Hebcal once every 30 minutes
     setInterval(updateHebcal, 1800000);
 
-    // --- MUSIC PLAYER ---
+    // MUSIC PLAYER
     const YOUTUBE_API_KEY = "AIzaSyBeIQRQR68iGpJDgfCUFgIvTcqJuNXKUT0";
     function searchMusic() {
       const query = document.getElementById('music-search').value.trim();
