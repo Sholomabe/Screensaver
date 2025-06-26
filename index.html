@@ -48,6 +48,64 @@
       #update-texts { font-size: 1.2em; }
       .settings-link { font-size: 1em; right: 10px;}
     }
+
+    /* Music Player Styles */
+    #music-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 320px;
+      background: #181818;
+      color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.5);
+      padding: 12px 12px 8px 12px;
+      z-index: 9999;
+      font-family: Arial, sans-serif;
+    }
+    #music-header {
+      font-weight: bold;
+      margin-bottom: 10px;
+      cursor: move;
+      user-select: none;
+    }
+    #music-search {
+      width: 65%;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: none;
+      margin-right: 6px;
+      font-size: 1em;
+    }
+    #music-results {
+      max-height: 120px;
+      overflow-y: auto;
+      margin: 8px 0;
+    }
+    .music-result {
+      padding: 4px 0;
+      cursor: pointer;
+      border-bottom: 1px solid #222;
+    }
+    .music-result:hover {
+      background: #333;
+    }
+    #close-music {
+      position: absolute;
+      top: 6px;
+      right: 10px;
+      background: #222;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+      font-size: 1.1em;
+      line-height: 1;
+      z-index: 10000;
+    }
+    #close-music:hover { background: #f55; color: #fff; }
   </style>
 </head>
 <body>
@@ -55,8 +113,21 @@
     <span class="settings-link" onclick="window.location.href='settings.html'">Settings</span>
     <div id="update-texts">No updates available.</div>
   </div>
+
+  <!-- Floating Music Player Window -->
+  <div id="music-float">
+    <button id="close-music" onclick="document.getElementById('music-float').style.display='none'">×</button>
+    <div id="music-header">🎵 Music Player</div>
+    <input type="text" id="music-search" placeholder="Search for music...">
+    <button onclick="searchMusic()">Search</button>
+    <div id="music-results"></div>
+    <div id="music-player-container" style="margin-top:10px;">
+      <iframe id="music-player" width="280" height="160" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+  </div>
+
   <script>
-    // Apply saved appearance settings
+    // --- Appearance and Office Updates ---
     function applySettings() {
       document.body.style.fontFamily = localStorage.getItem('font') || "Arial, sans-serif";
       document.body.style.fontSize = localStorage.getItem('fontSize') || "20px";
@@ -64,7 +135,6 @@
       document.body.style.background = localStorage.getItem('bgColor') || "#000000";
     }
 
-    // Fetch and display up to 5 office updates
     function fetchOfficeUpdates() {
       let hasUpdate = false;
       let html = "";
@@ -83,7 +153,6 @@
       fetchOfficeUpdates();
     });
 
-    // Optional: Refresh updates if localStorage changes in another tab
     window.addEventListener('storage', function(e) {
       if (e.key && e.key.startsWith('officeUpdate')) {
         fetchOfficeUpdates();
@@ -92,6 +161,62 @@
         applySettings();
       }
     });
+
+    // --- Floating Music Player ---
+    const YOUTUBE_API_KEY = "AIzaSyBeIQRQR68iGpJDgfCUFgIvTcqJuNXKUT0";
+
+    function searchMusic() {
+      const query = document.getElementById('music-search').value.trim();
+      if (!query) return;
+      document.getElementById('music-results').innerHTML = 'Searching...';
+
+      fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=8&q=${encodeURIComponent(query)}&key=${YOUTUBE_API_KEY}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.items || data.items.length === 0) {
+            document.getElementById('music-results').innerHTML = "No results found.";
+            return;
+          }
+          document.getElementById('music-results').innerHTML = data.items.map(item =>
+            `<div class="music-result" onclick="playMusic('${item.id.videoId}')">
+              <b>${item.snippet.title}</b><br>
+              <span style='font-size:0.9em;color:#bbb;'>${item.snippet.channelTitle}</span>
+            </div>`
+          ).join('');
+        })
+        .catch(e => {
+          document.getElementById('music-results').innerHTML = "Error searching.";
+        });
+    }
+
+    function playMusic(videoId) {
+      document.getElementById('music-player').src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+      document.getElementById('music-results').innerHTML = "";
+    }
+
+    document.getElementById('music-search').addEventListener('keydown', function(e) {
+      if (e.key === "Enter") searchMusic();
+    });
+
+    // --- Make music-float draggable ---
+    (function makeDraggable() {
+      const el = document.getElementById('music-float');
+      const header = document.getElementById('music-header');
+      let offsetX = 0, offsetY = 0, isDown = false;
+      header.onmousedown = function(e) {
+        isDown = true;
+        offsetX = el.offsetLeft - e.clientX;
+        offsetY = el.offsetTop - e.clientY;
+        document.onmousemove = function(e2) {
+          if (!isDown) return;
+          el.style.right = 'auto';
+          el.style.bottom = 'auto';
+          el.style.left = (e2.clientX + offsetX) + 'px';
+          el.style.top = (e2.clientY + offsetY) + 'px';
+        };
+        document.onmouseup = function() { isDown = false; document.onmousemove = null; };
+      };
+    })();
   </script>
 </body>
 </html>
