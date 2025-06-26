@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Screensaver</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Modern font from Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -29,7 +28,6 @@
       overflow: hidden;
       box-sizing: border-box;
     }
-    /* Settings Icon */
     .settings-link {
       position: fixed;
       bottom: 30px;
@@ -61,7 +59,6 @@
     .settings-link:hover svg {
       fill: var(--accent2);
     }
-    /* Modern clock in top left */
     #clock {
       position: absolute;
       top: 36px;
@@ -80,7 +77,6 @@
       backdrop-filter: var(--glass-blur);
       box-shadow: var(--box-shadow);
     }
-    /* Large dates in top center */
     #date-container {
       position: absolute;
       top: 38px;
@@ -126,24 +122,24 @@
       pointer-events: none;
       transition: height 0.25s;
     }
-    /* Glassy panels for zmanim and shabbat */
+    /* GLASS PANELS: 30% smaller than before */
     .glass-panel {
       background: var(--glass-bg);
       border-radius: var(--panel-radius);
       box-shadow: var(--box-shadow);
-      padding: 26px 28px 22px 28px;
-      min-width: 220px;
-      max-width: 32vw;
-      min-height: 120px;
+      padding: 18px 19px 15px 19px; /* was 26px 28px 22px 28px */
+      min-width: 154px;  /* was 220px */
+      max-width: 22.4vw; /* was 32vw */
+      min-height: 84px;  /* was 120px */
       backdrop-filter: var(--glass-blur);
       display: flex;
       flex-direction: column;
       align-items: flex-start;
     }
     .panel-header {
-      font-size: 1.25em;
+      font-size: 0.88em; /* 30% smaller than 1.25em */
       font-weight: 700;
-      margin-bottom: 12px;
+      margin-bottom: 9px;
       letter-spacing: 0.09em;
       width: 100%;
       text-align: left;
@@ -159,19 +155,19 @@
       color: #c2e3ff;
       z-index: 10;
       text-align: left;
-      line-height: 2.04;
-      font-size: 1.08em;
+      line-height: 1.6;
+      font-size: 0.7em; /* 30% smaller than 1em */
     }
     #zmanim-today .panel-header {
       color: var(--zmanim-header);
       border-bottom: 2px solid #40e0ff30;
-      margin-bottom: 10px;
-      padding-bottom: 3px;
-      font-size: 1.22em;
+      margin-bottom: 7px;
+      padding-bottom: 2px;
+      font-size: 0.95em;
     }
     #zmanim-list {
       width: 100%;
-      font-size: 1.14em;
+      font-size: 0.8em; /* 30% smaller than 1.14em */
       word-break: break-all;
       font-weight: 600;
     }
@@ -183,29 +179,29 @@
       color: #ffe082;
       z-index: 10;
       text-align: right;
-      line-height: 2.04;
-      font-size: 1.08em;
+      line-height: 1.6;
+      font-size: 0.7em;
     }
     #shabbat-parsha-container .panel-header {
       color: var(--shabbat-header);
       border-bottom: 2px solid #ffe08240;
-      margin-bottom: 10px;
-      padding-bottom: 3px;
+      margin-bottom: 7px;
+      padding-bottom: 2px;
       text-align: right;
-      font-size: 1.22em;
+      font-size: 0.95em;
     }
     #hebrew-parsha {
-      font-size: 1.10em;
+      font-size: 0.8em;
       color: #fff1c1;
       font-weight: 700;
-      margin-bottom: 0.4vw;
+      margin-bottom: 0.2vw;
       letter-spacing: 0.03em;
     }
     #shabbat-times {
       color: #8fffa0;
-      font-size: 1.13em;
+      font-size: 0.8em;
       font-weight: 600;
-      margin-top: 0.16em;
+      margin-top: 0.09em;
       letter-spacing: 0.01em;
     }
     #update-texts {
@@ -242,7 +238,7 @@
       #center-logo { height: 140px; }
       #clock { font-size: 4vw; min-width: 110px; padding: 6px 10px;}
       #date-container { font-size: 1.3vw; min-width: 160px; padding: 12px 8px; }
-      .glass-panel { min-width: 120px; padding: 12px 7px 12px 9px; }
+      .glass-panel { min-width: 80px; padding: 7px 3px 7px 4px; }
       #update-texts { font-size: 1em; min-width: 140px; padding: 12px 10px;}
     }
     @media (max-width: 600px) {
@@ -254,7 +250,6 @@
       .settings-link { width: 36px; height: 36px; right: 12px; bottom: 12px;}
       .settings-link svg { width: 19px; height: 19px;}
     }
-    /* Music Player Styles (unchanged from before) */
     #music-float {
       position: fixed;
       bottom: 24px;
